@@ -420,10 +420,14 @@ function setSyncStatus(text, tone) {
 
 function renderSyncUI() {
   const connected = !!getSheetId();
+  const editUrl = connected ? `https://docs.google.com/spreadsheets/d/${getSheetId()}/edit` : '';
   if (syncUI.link) {
     syncUI.link.hidden = !connected;
-    if (connected) syncUI.link.href = `https://docs.google.com/spreadsheets/d/${getSheetId()}/edit`;
+    if (connected) syncUI.link.href = editUrl;
   }
+  // Keep the connected sheet's URL visible in the field. Only fill when empty so we
+  // never clobber a different URL the user is mid-way through pasting.
+  if (syncUI.url && connected && !syncUI.url.value) syncUI.url.value = editUrl;
   if (syncUI.forget)  syncUI.forget.hidden    = !connected;
   if (syncUI.syncNow) syncUI.syncNow.disabled = !connected;
   if (syncUI.connect) syncUI.connect.textContent = connected ? 'Reconnect' : 'Connect';
@@ -450,7 +454,6 @@ async function actionConnect() {
     if (inputVal.trim()) {
       setSyncStatus('Attaching…', 'info');
       await attachToSheet(inputVal);
-      if (syncUI.url) syncUI.url.value = '';
     } else {
       setSyncStatus('Creating sheet…', 'info');
       await ensureSheet();
@@ -472,6 +475,7 @@ function actionForget() {
   accessToken    = null;
   tokenExpiresAt = 0;
   tokenClient    = null;
+  if (syncUI.url) syncUI.url.value = '';
   console.log('[sync] Disconnected');
   renderSyncUI();
   setSyncStatus('Disconnected.', 'info');

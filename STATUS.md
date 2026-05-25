@@ -34,7 +34,7 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
 
 ## Conventions
 
-- Current version: **v0.1.0**
+- Current version: **v0.1.1** (v0.1.0 = Phase 1; v0.1.1 = sheet-URL persists in settings + app locked to Pixel 8a width)
 - Deploy URL: `https://andybastable-home.github.io/gratitude/`
 - Three-location version bump on every shell commit: `index.html` brand-version span,
   `index.html` footer span, `service-worker.js` `CACHE_VERSION`.

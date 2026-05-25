@@ -5,14 +5,24 @@
 html, body { margin: 0; padding: 0; }
 img, svg { display: block; max-width: 100%; }
 
+/* The Pixel 8a is the primary target (~412px CSS px wide). Lock the whole app to that
+   column and centre it; on wider (desktop) viewports it reads as a phone preview. */
+html { background: #f4f2f7; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background: #f4f2f7;
   color: #221c2e;
   min-height: 100dvh;
+  max-width: 412px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+}
+
+@media (min-width: 480px) {
+  html { background: #ded7ea; }
+  body { box-shadow: 0 0 0 1px rgba(20, 16, 30, .06), 0 18px 50px -12px rgba(20, 16, 30, .25); }
 }
 
 .app-header {
@@ -80,7 +90,7 @@ body {
 }
 .settings-overlay[hidden] { display: none; }
 .settings-panel {
-  background: #fff; width: 100%; max-width: 560px; border-radius: 18px 18px 0 0;
+  background: #fff; width: 100%; max-width: 412px; border-radius: 18px 18px 0 0;
   padding: 16px 16px 24px; max-height: 90dvh; overflow: auto;
 }
 .settings-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
@@ -99,6 +109,7 @@ body {
 .sync-status.is-info { color: #6b6478; }
 
 @media (prefers-color-scheme: dark) {
+  html { background: #161320; }
   body { background: #161320; color: #ede9f3; }
   .app-header { background: #221c2e; border-color: #332a44; }
   .entry-row, .settings-panel, .add-input, .config-input, .nav-btn, .btn-ghost {
@@ -106,4 +117,8 @@ body {
   }
   .brand-version { background: #2d2640; }
   .config-label, .settings-btn { color: #b3aac6; }
+}
+
+@media (prefers-color-scheme: dark) and (min-width: 480px) {
+  html { background: #0e0c15; }
 }
