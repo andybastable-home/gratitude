@@ -37,11 +37,11 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
   slate-periwinkle `hsl(210 30% 48%)`, kept desaturated so it never reads as "the blue app".
 - **Categories:** wife / family / nature / me / God. Line-icon + muted per-category dot
   (season leads). **God glyph = simple cross.** Brand mark = heart (Andy likes it).
-- **Font: open question.** Fraunces felt too samey vs the sisters. Round 1
-  (`notes/font-specimen.html`) → Andy liked **Instrument Serif** but wanted the heading
-  bolder/wider (it's single-weight, no width axis). Round 2 (`notes/font-specimen-2.html`):
-  bolder Instrument relatives (DM Serif Display, Playfair, Bodoni Moda) + hand-drawn faces
-  (Caveat, Shantell Sans, Patrick Hand) for the journal feel. All OFL / self-hostable.
+- **Font — header LOCKED: Caveat** (handwriting) for the wordmark + date headings. Body
+  font still open: round 3 (`notes/font-specimen-3.html`) pairs locked Caveat with six
+  body options — serif (Instrument Serif eased wider, Newsreader, Lora) and sans (Hanken
+  Grotesk, Figtree, Nunito). All OFL / self-hostable. (Rounds 1–2 specimens retained for
+  history.) Andy didn't like Caveat as body text.
 
 ## Next 2-3 steps (Phase 2)
 
