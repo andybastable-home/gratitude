@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6d5a8a" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#161320" media="(prefers-color-scheme: dark)">
+  <meta name="description" content="Personal gratitude journal.">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="apple-touch-icon" href="./icons/icon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Gratitude</title>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/>
+        </svg>
+      </span>
+      <span class="brand-name">Gratitude</span>
+      <span class="brand-version" aria-label="App version">v0.1.0</span>
+    </div>
+    <div class="header-actions">
+      <button id="settings-btn" class="settings-btn" type="button" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section class="day-view">
+      <div class="day-nav">
+        <button id="day-prev" class="nav-btn" type="button" aria-label="Previous day">&#9664;</button>
+        <div class="day-heading">
+          <h1 id="day-date" class="day-date">&mdash;</h1>
+          <button id="day-today" class="today-btn" type="button">Jump to today</button>
+        </div>
+        <button id="day-next" class="nav-btn" type="button" aria-label="Next day">&#9654;</button>
+      </div>
+
+      <!-- Dev harness: a plain text input. Phase 4 replaces this with the real logging UX. -->
+      <form id="add-form" class="add-form">
+        <input id="add-input" class="add-input" type="text" placeholder="What are you grateful for?" autocomplete="off">
+        <button id="add-btn" class="btn btn-primary" type="submit">Add</button>
+      </form>
+
+      <ul id="entry-list" class="entry-list"></ul>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>v0.1.0 &middot; offline-ready</span>
+  </footer>
+
+  <!-- Settings / Sync overlay -->
+  <div class="settings-overlay" id="settings-overlay" hidden>
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="Sync settings">
+      <div class="settings-header">
+        <h2 class="modal-title">Sync</h2>
+        <button id="settings-close" class="settings-btn" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="settings-body">
+        <div class="config-section">
+          <label class="config-label" for="sync-url">Sheet URL (leave blank to create new)</label>
+          <input type="text" id="sync-url" class="config-input" placeholder="https://docs.google.com/spreadsheets/d/&hellip;" autocomplete="off">
+        </div>
+        <div class="settings-sync">
+          <button id="sync-connect" type="button" class="btn btn-primary">Connect</button>
+          <button id="sync-now"     type="button" class="btn btn-ghost" disabled>Sync now</button>
+          <button id="sync-forget"  type="button" class="btn btn-ghost" hidden>Disconnect</button>
+          <a id="sync-sheet-link" class="btn btn-ghost" href="#" target="_blank" rel="noopener" hidden>Open sheet</a>
+        </div>
+        <p id="sync-status" class="sync-status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/vendor/dexie.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="./app.js"></script>
+  <script src="./sync.js"></script>
+</body>
+</html>

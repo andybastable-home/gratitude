@@ -1,0 +1,109 @@
+/* Phase 1 scrappy dev-harness styles. The real design lands in Phase 2/3 — do not
+   invest in polishing this; it exists only to make the harness usable. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+img, svg { display: block; max-width: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #f4f2f7;
+  color: #221c2e;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: #fff; border-bottom: 1px solid #e4e0ec;
+}
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand-mark { width: 26px; height: 26px; color: #6d5a8a; }
+.brand-mark svg { width: 26px; height: 26px; }
+.brand-name { font-size: 20px; font-weight: 700; }
+.brand-version {
+  font-size: 11px; font-weight: 600; color: #6d5a8a; background: #efeaf6;
+  padding: 2px 8px; border-radius: 999px; letter-spacing: .02em;
+}
+.header-actions { display: flex; }
+.settings-btn {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  background: none; border: none; color: #6b6478; cursor: pointer; border-radius: 8px;
+}
+.settings-btn:active { background: #efeaf6; }
+
+.app-main { flex: 1; width: 100%; max-width: 560px; margin: 0 auto; padding: 16px; }
+
+.day-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
+.nav-btn {
+  min-width: 44px; min-height: 44px; border: 1px solid #e4e0ec; background: #fff;
+  border-radius: 10px; font-size: 15px; cursor: pointer; color: #6d5a8a;
+}
+.day-heading { text-align: center; }
+.day-date { font-size: 22px; font-weight: 700; margin: 0; }
+.today-btn { margin-top: 2px; font-size: 12px; border: none; background: none; color: #6d5a8a; cursor: pointer; }
+
+.add-form { display: flex; gap: 8px; margin-bottom: 16px; }
+.add-input {
+  flex: 1; min-height: 44px; padding: 0 12px; border: 1px solid #d9d3e6;
+  border-radius: 10px; font-size: 16px; background: #fff; color: inherit;
+}
+.btn {
+  min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid transparent;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.btn-primary { background: #6d5a8a; color: #fff; }
+.btn-ghost { background: #fff; border-color: #d9d3e6; color: #221c2e; }
+.btn:disabled { opacity: .5; cursor: default; }
+
+.entry-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.entry-row {
+  display: flex; align-items: center; gap: 8px; background: #fff;
+  border: 1px solid #e4e0ec; border-radius: 12px; padding: 12px 14px;
+}
+.entry-text { flex: 1; word-break: break-word; }
+.entry-del {
+  width: 32px; height: 32px; flex-shrink: 0; border: none; background: none;
+  color: #a098b0; font-size: 22px; line-height: 1; cursor: pointer; border-radius: 8px;
+}
+.entry-del:active { background: #f0ecf6; }
+.entry-empty { color: #8a8398; font-style: italic; padding: 8px 2px; }
+
+.app-footer { text-align: center; padding: 12px; font-size: 11px; color: #9a93a8; }
+
+/* Settings / Sync overlay — bottom sheet */
+.settings-overlay {
+  position: fixed; inset: 0; background: rgba(20,16,30,.45);
+  display: flex; align-items: flex-end; justify-content: center; z-index: 50;
+}
+.settings-overlay[hidden] { display: none; }
+.settings-panel {
+  background: #fff; width: 100%; max-width: 560px; border-radius: 18px 18px 0 0;
+  padding: 16px 16px 24px; max-height: 90dvh; overflow: auto;
+}
+.settings-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.modal-title { font-size: 18px; margin: 0; }
+.config-section { margin: 12px 0; }
+.config-label { display: block; font-size: 13px; color: #6b6478; margin-bottom: 6px; }
+.config-input {
+  width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid #d9d3e6;
+  border-radius: 10px; font-size: 16px; background: #fff; color: inherit;
+}
+.settings-sync { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.settings-sync .btn, .settings-sync a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+.sync-status { margin-top: 12px; font-size: 13px; min-height: 18px; }
+.sync-status.is-error { color: #c0392b; }
+.sync-status.is-ok { color: #2d7a4f; }
+.sync-status.is-info { color: #6b6478; }
+
+@media (prefers-color-scheme: dark) {
+  body { background: #161320; color: #ede9f3; }
+  .app-header { background: #221c2e; border-color: #332a44; }
+  .entry-row, .settings-panel, .add-input, .config-input, .nav-btn, .btn-ghost {
+    background: #221c2e; border-color: #332a44; color: #ede9f3;
+  }
+  .brand-version { background: #2d2640; }
+  .config-label, .settings-btn { color: #b3aac6; }
+}
