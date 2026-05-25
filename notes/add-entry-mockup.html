@@ -140,19 +140,38 @@
     .chip.is-nature { --c: var(--c-nature); } .chip.is-me { --c: var(--c-me); }
     .chip.is-god { --c: var(--c-god); }
 
-    /* selected chip picks up its category colour + hand-drawn hatch fill */
-    .chip.sel { color: var(--c); border-color: transparent; }
+    /* selected chip = the day-view card's crayon treatment, scaled down:
+       overlapping double sketch outline, dense hatch in the middle, edges erased soft */
+    .chip.sel { color: var(--c); border-color: transparent; z-index: 1; text-shadow: 0 1px 0 var(--card), 0 0 3px var(--card); }
     .chip.sel svg { color: var(--c); }
-    .chip.sel::before {
-      content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 14px;
-      border: 1.6px solid color-mix(in srgb, var(--c) 72%, transparent);
-      background-color: color-mix(in srgb, var(--c) 6%, var(--card));
-      background-image:
-              repeating-linear-gradient(-48deg, transparent, transparent 2px, color-mix(in srgb, var(--c) 15%, transparent) 2px, color-mix(in srgb, var(--c) 15%, transparent) 4px),
-              repeating-linear-gradient(-39deg, transparent, transparent 4px, color-mix(in srgb, var(--c) 9%, transparent) 4px, color-mix(in srgb, var(--c) 9%, transparent) 8px);
-      filter: url(#sketch1);
+
+    .chip.sel::before, .chip.sel::after {
+      content: ""; position: absolute; pointer-events: none;
+      border: 1.2px solid color-mix(in srgb, var(--c) 75%, transparent);
     }
-    .chip.sel.alt::before { filter: url(#sketch2); }
+    /* inner line + denser shading, edges faded by a soft "eraser" inset glow */
+    .chip.sel::before {
+      inset: 0; z-index: -2;
+      background-color: color-mix(in srgb, var(--c) 4%, var(--card));
+      box-shadow:
+              inset 2px 2px 5px 1px color-mix(in srgb, var(--c) 4%, var(--card)),
+              inset -3px -2px 6px 1px color-mix(in srgb, var(--c) 4%, var(--card)),
+              inset -1px 1px 5px 1px color-mix(in srgb, var(--c) 4%, var(--card));
+      background-image:
+              repeating-linear-gradient(-52deg, transparent, transparent 1.5px, color-mix(in srgb, var(--c) 17%, transparent) 1.5px, color-mix(in srgb, var(--c) 17%, transparent) 3px),
+              repeating-linear-gradient(-43deg, transparent, transparent 3px, color-mix(in srgb, var(--c) 12%, transparent) 3px, color-mix(in srgb, var(--c) 12%, transparent) 6px),
+              repeating-linear-gradient(-61deg, transparent, transparent 5px, color-mix(in srgb, var(--c) 9%, transparent) 5px, color-mix(in srgb, var(--c) 9%, transparent) 10px);
+      filter: url(#sketch1);
+      border-radius: 16px 7px 15px 9px / 9px 15px 7px 16px;
+      transform: rotate(0.5deg);
+    }
+    /* outer line pushed out so the two outlines cross over */
+    .chip.sel::after {
+      inset: -2px; z-index: -1;
+      filter: url(#sketch2);
+      border-radius: 7px 16px 9px 15px / 16px 7px 15px 9px;
+      transform: rotate(-0.6deg);
+    }
 
     /* ---- bottom action ---- */
     .compose-foot { position: relative; padding: 16px 22px 24px; }
@@ -183,14 +202,14 @@
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <filter id="sketch1" x="-12%" y="-12%" width="124%" height="124%">
+    <filter id="sketch1" x="-14%" y="-14%" width="128%" height="128%">
       <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G" result="d"/>
       <feGaussianBlur in="d" stdDeviation="0.5"/>
     </filter>
-    <filter id="sketch2" x="-12%" y="-12%" width="124%" height="124%">
+    <filter id="sketch2" x="-14%" y="-14%" width="128%" height="128%">
       <feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="2" seed="24" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" result="d"/>
       <feGaussianBlur in="d" stdDeviation="0.5"/>
     </filter>
   </defs>
