@@ -69,17 +69,19 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
   1407×1125 / 558 KB — needs downscaling before it's vendored + SW-precached.
 - **Dark mode: NONE.** Light-only — embrace the warm-paper journal identity (also lets the
   multiply-blend heroes just work). Decided 2026-05-25.
-- **Add-entry = full-screen compose** (LOCKED direction, `notes/add-entry-mockup.html`): the +
+- **Add-entry = full-screen compose** (LOCKED + approved, `notes/add-entry-mockup.html`): the +
   FAB opens a calm full-screen page (hero overhead, Caveat prompt "What are you grateful for?",
-  borderless journal text field, category **chips** — selected chip fills with its colour's
-  hand-drawn hatch), primary **"Add to today"** button pinned bottom (thumb reach, disabled
-  until there's content). Chosen over a quick bottom sheet for the reflective journal feel.
+  borderless journal text field, category **chips**, primary **"Add to today"** button pinned
+  bottom in thumb reach, disabled until there's content). Chosen over a quick bottom sheet for
+  the reflective journal feel. **Selected chip = the day-view card's crayon treatment** scaled
+  down (overlapping double sketch outline, dense-middle hatch + soft inset "eraser" fade, squarer
+  organic corners; displacement scale 4/3.5 vs cards' 6/5) so choosing a category "inks it in."
 - **Timestamp** = faint right-aligned **Caveat** scribble (almost hidden). LOCKED.
 
 ## Next 2-3 steps (Phase 2 → close)
 
-1. Andy reviews `notes/add-entry-mockup.html` (full-screen compose) + the gear fix in
-   `day-view-mockup-4.html`. Gemini generates the 4 remaining hero JPGs from the brief.
+1. Compose screen + gear fix **approved**. Remaining: Gemini generates the 4 remaining hero
+   JPGs from the brief (Spring, Late Summer sunflowers, Advent, Winter).
 2. Build the definitive `notes/style-guide.html`: token grid + all six seasonal themes +
    day-view + the compose screen. (No light/dark — light only.)
 3. Vendor Caveat + Figtree `.woff2` into `assets/fonts/`; downscale `autumnhero.jpg` and drop
