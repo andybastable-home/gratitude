@@ -80,10 +80,11 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
 ## Next 2-3 steps (Phase 2 → close)
 
 1. Compose screen + gear fix **approved**; all six hero JPGs **done** (in `notes/`).
-2. Build the definitive `notes/style-guide.html`: token grid + all six seasonal themes +
-   day-view + the compose screen. (No light/dark — light only.)
-3. Vendor Caveat + Figtree `.woff2` into `assets/fonts/`; move the six heroes into `assets/`.
-   Then Phase 3 implements for real.
+2. **Definitive `notes/style-guide.html` built** — tokens (type, 5 category colours, 6 seasonal
+   themes), components (entry card, chip, FAB, frosted gear, add button), day-view ×6 seasons,
+   compose ×2 states. Light-only. Awaiting Andy's review.
+3. **Phase 2 → 3 handoff:** vendor Caveat + Figtree `.woff2` into `assets/fonts/`; move the six
+   heroes into `assets/`. Then Phase 3 implements the real app against these tokens.
 
 ## Conventions
 

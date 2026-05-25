@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Gratitude — Style Guide (Phase 2)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       GRATITUDE · DESIGN TOKENS
+       ------------------------------------------------------------
+       Light-only (no dark mode — warm paper + seasonal heroes are
+       the identity). Category colours are FIXED across seasons; the
+       season accent rotates through six UK mini-seasons.
+       ============================================================ */
+    :root {
+      /* fixed category colours */
+      --c-wife:   hsl(348 54% 52%);
+      --c-family: hsl(32 62% 47%);
+      --c-nature: hsl(134 34% 38%);
+      --c-me:     hsl(202 30% 45%);
+      --c-god:    hsl(265 32% 52%);
+
+      /* radii */
+      --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+
+      /* fonts (both OFL, will be self-hosted woff2 in assets/fonts/) */
+      --font-hand: "Caveat", cursive;                 /* wordmark, dates, category headings, timestamps */
+      --font-body: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    /* ---- the six seasonal themes ---- */
+    /* Spring · Mar–Apr · narcissus green-gold */
+    .theme-spring {
+      --accent: hsl(82 45% 42%); --accent-deep: hsl(88 48% 31%); --accent-soft: hsl(82 42% 93%);
+      --ink: hsl(80 22% 22%); --ink-soft: hsl(80 12% 42%); --ink-faint: hsl(80 10% 58%);
+      --paper: hsl(54 40% 95%); --card: hsl(54 46% 98.5%);
+      --wash-a: hsl(82 45% 88% / 0.5); --wash-b: hsl(46 66% 88% / 0.45);
+    }
+    /* Early Summer · May–Jun · blossom rose */
+    .theme-earlysummer {
+      --accent: hsl(345 60% 53%); --accent-deep: hsl(345 60% 43%); --accent-soft: hsl(345 58% 94%);
+      --ink: hsl(345 22% 24%); --ink-soft: hsl(345 12% 45%); --ink-faint: hsl(345 10% 62%);
+      --paper: hsl(36 46% 95%); --card: hsl(40 52% 98.5%);
+      --wash-a: hsl(345 60% 90% / 0.55); --wash-b: hsl(40 70% 88% / 0.5);
+    }
+    /* Late Summer · Jul–Sep · sun-gold */
+    .theme-latesummer {
+      --accent: hsl(38 72% 47%); --accent-deep: hsl(34 70% 38%); --accent-soft: hsl(40 75% 93%);
+      --ink: hsl(34 26% 22%); --ink-soft: hsl(34 14% 42%); --ink-faint: hsl(34 12% 58%);
+      --paper: hsl(40 46% 95%); --card: hsl(42 52% 98.5%);
+      --wash-a: hsl(38 72% 87% / 0.5); --wash-b: hsl(48 70% 87% / 0.45);
+    }
+    /* Autumn · Oct–Nov · russet */
+    .theme-autumn {
+      --accent: hsl(20 64% 47%); --accent-deep: hsl(18 62% 39%); --accent-soft: hsl(26 64% 93%);
+      --ink: hsl(24 26% 22%); --ink-soft: hsl(24 14% 42%); --ink-faint: hsl(24 12% 58%);
+      --paper: hsl(34 40% 94%); --card: hsl(38 48% 98%);
+      --wash-a: hsl(20 64% 86% / 0.55); --wash-b: hsl(40 64% 84% / 0.5);
+    }
+    /* Advent · Dec · liturgical violet + candle-gold */
+    .theme-advent {
+      --accent: hsl(270 33% 46%); --accent-deep: hsl(270 36% 36%); --accent-soft: hsl(270 28% 94%);
+      --ink: hsl(280 18% 22%); --ink-soft: hsl(280 10% 44%); --ink-faint: hsl(280 8% 60%);
+      --paper: hsl(40 30% 95%); --card: hsl(42 38% 98.5%);
+      --wash-a: hsl(270 33% 89% / 0.5); --wash-b: hsl(42 60% 86% / 0.45);
+    }
+    /* Winter · Jan–Feb · frost slate-periwinkle (kept desaturated so it never reads as "the blue app") */
+    .theme-winter {
+      --accent: hsl(214 30% 50%); --accent-deep: hsl(216 32% 40%); --accent-soft: hsl(214 26% 93%);
+      --ink: hsl(214 16% 24%); --ink-soft: hsl(214 10% 44%); --ink-faint: hsl(214 8% 60%);
+      --paper: hsl(40 28% 95%); --card: hsl(42 34% 98.5%);
+      --wash-a: hsl(214 30% 89% / 0.45); --wash-b: hsl(40 38% 89% / 0.4);
+    }
+
+    /* season hero images (vendored watercolour JPGs) */
+    .theme-spring      .hero { background-image: url('springhero.jpg'); }
+    .theme-earlysummer .hero { background-image: url('earlysummerhero.jpg'); }
+    .theme-latesummer  .hero { background-image: url('latesummerhero.jpg'); }
+    .theme-autumn      .hero { background-image: url('autumnhero.jpg'); }
+    .theme-advent      .hero { background-image: url('adventhero.jpg'); }
+    .theme-winter      .hero { background-image: url('winterhero.jpg'); }
+
+    /* ============================================================
+       DOCUMENT CHROME (style-guide page, not the app)
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    button { font-family: inherit; }
+    svg { display: block; }
+
+    body {
+      font-family: var(--font-body); background: hsl(35 24% 90%); color: hsl(30 14% 22%);
+      min-height: 100dvh; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility; font-size: 16px; line-height: 1.55;
+    }
+    .doc { max-width: 1180px; margin: 0 auto; padding: 56px 24px 96px; }
+
+    .doc-head { margin-bottom: 16px; }
+    .doc-head .brand-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .doc-head .mark { width: 46px; height: 46px; border-radius: 13px; background: var(--c-wife); color: hsl(40 60% 98%); display: grid; place-items: center; box-shadow: 0 6px 16px -6px var(--c-wife); }
+    .doc-head .mark svg { width: 27px; height: 27px; }
+    .doc-head .wordmark { font-family: var(--font-hand); font-weight: 700; font-size: 52px; line-height: 1; color: hsl(30 20% 20%); }
+    .doc-head h1 { font-family: var(--font-hand); font-weight: 700; font-size: clamp(38px, 6vw, 54px); line-height: 1.02; margin: 0 0 10px; color: hsl(30 22% 20%); }
+    .doc-head p { color: hsl(30 10% 38%); max-width: 70ch; margin: 0; font-size: 15.5px; }
+    .doc-head .ver { font-family: var(--font-mono); font-size: 12px; color: hsl(30 10% 50%); margin-top: 12px; }
+
+    section.block { margin-top: 64px; }
+    .block > .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: hsl(345 40% 48%); margin: 0 0 8px; }
+    .block > h2 { font-family: var(--font-hand); font-weight: 700; font-size: 38px; line-height: 1; margin: 0 0 6px; color: hsl(30 22% 20%); }
+    .block > .lead { color: hsl(30 10% 40%); max-width: 74ch; margin: 0 0 28px; font-size: 15px; }
+    hr.rule { border: none; border-top: 1px solid hsl(35 16% 82%); margin: 56px 0 0; }
+
+    /* swatch grids */
+    .swatches { display: flex; flex-wrap: wrap; gap: 16px; }
+    .sw { width: 132px; }
+    .sw-chip { height: 60px; border-radius: 12px; border: 1px solid hsl(30 10% 0% / 0.08); box-shadow: 0 1px 2px hsl(30 20% 20% / 0.06); display: flex; align-items: flex-end; padding: 7px; }
+    .sw-chip .cat-ico { width: 18px; height: 18px; color: hsl(40 60% 98%); }
+    .sw-name { font-weight: 600; font-size: 13px; margin: 9px 0 1px; }
+    .sw-val { font-family: var(--font-mono); font-size: 10.5px; color: hsl(30 8% 50%); }
+
+    /* seasonal theme rows */
+    .seasons { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; }
+    .season-card { background: hsl(40 40% 99%); border: 1px solid hsl(35 16% 86%); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px hsl(30 20% 20% / 0.06); }
+    .season-thumb { height: 92px; background-size: cover; background-position: top right; }
+    .season-body { padding: 14px 16px 16px; }
+    .season-body h3 { font-family: var(--font-hand); font-weight: 700; font-size: 26px; margin: 0; line-height: 1; }
+    .season-body .months { font-size: 12px; color: hsl(30 10% 48%); margin: 3px 0 12px; font-weight: 600; letter-spacing: 0.02em; }
+    .season-dots { display: flex; gap: 7px; }
+    .season-dots span { flex: 1; height: 30px; border-radius: 8px; border: 1px solid hsl(30 10% 0% / 0.06); }
+    .season-dots .lbl { font-family: var(--font-mono); }
+    .season-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-family: var(--font-mono); font-size: 10px; color: hsl(30 8% 52%); }
+
+    /* type specimen */
+    .specimen { display: grid; gap: 22px; }
+    .spec-row { display: grid; grid-template-columns: 132px 1fr; gap: 20px; align-items: baseline; padding-bottom: 20px; border-bottom: 1px dashed hsl(35 16% 84%); }
+    .spec-tag { font-family: var(--font-mono); font-size: 11px; color: hsl(30 8% 48%); line-height: 1.5; }
+    .spec-tag b { display: block; color: hsl(30 14% 28%); font-weight: 700; }
+    .sp-hand-xl { font-family: var(--font-hand); font-weight: 700; font-size: 54px; line-height: 1; color: hsl(30 20% 20%); }
+    .sp-hand-date { font-family: var(--font-hand); font-weight: 700; font-size: 40px; line-height: 1; color: var(--c-wife); }
+    .sp-hand-cat { font-family: var(--font-hand); font-weight: 700; font-size: 28px; line-height: 1; color: var(--c-nature); }
+    .sp-body { font-family: var(--font-body); font-weight: 400; font-size: 16px; line-height: 1.55; max-width: 60ch; color: hsl(30 16% 22%); }
+    .sp-label { font-family: var(--font-body); font-weight: 700; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: hsl(30 10% 42%); }
+
+    /* component bench */
+    .bench { display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; }
+    .bench-item { }
+    .bench-item .bench-tag { font-family: var(--font-mono); font-size: 11px; color: hsl(30 8% 48%); margin-bottom: 12px; }
+    .bench-pad { padding: 22px; border-radius: 18px; background:
+            radial-gradient(120% 90% at 8% 0%, var(--wash-a) 0%, transparent 50%),
+            var(--paper); border: 1px solid hsl(35 16% 86%); color: var(--ink); }
+
+    /* phones */
+    .frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(312px, 1fr)); gap: 26px; justify-items: center; }
+    .frame-wrap { display: flex; flex-direction: column; gap: 11px; align-items: center; width: 100%; }
+    .frame-tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: hsl(30 10% 48%); text-align: center; }
+    .phone {
+      position: relative; width: 100%; max-width: 352px; border-radius: 34px; padding: 7px;
+      background: hsl(30 12% 80%);
+      box-shadow: 0 30px 60px -28px hsl(30 30% 20% / 0.5), 0 8px 20px -10px hsl(30 30% 20% / 0.25);
+    }
+    .screen {
+      position: relative; border-radius: 28px; overflow: hidden; min-height: 720px;
+      display: flex; flex-direction: column;
+      background:
+              radial-gradient(120% 80% at 8% 0%, var(--wash-a) 0%, transparent 46%),
+              radial-gradient(120% 80% at 100% 100%, var(--wash-b) 0%, transparent 52%),
+              var(--paper);
+      color: var(--ink);
+    }
+    .screen::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0.04; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .screen > * { position: relative; z-index: 2; }
+
+    /* seasonal hero (painterly watercolour, fades into paper) */
+    .hero {
+      position: absolute; top: 0; left: 0; right: 0; height: 206px; z-index: 1; pointer-events: none;
+      background-size: cover; background-position: top right; background-repeat: no-repeat;
+      mix-blend-mode: multiply; opacity: 0.85;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95) 38%, transparent 100%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95) 38%, transparent 100%);
+    }
+
+    .app-header { display: flex; align-items: center; gap: 10px; padding: 18px 20px 12px; }
+    .brand-mark { width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0; background: var(--accent); color: hsl(40 60% 98%); display: grid; place-items: center; box-shadow: 0 6px 14px -5px var(--accent); }
+    .brand-mark svg { width: 21px; height: 21px; }
+    .brand-name { font-family: var(--font-hand); font-weight: 700; font-size: 30px; line-height: 1; color: var(--ink); flex: 1; }
+    /* settings gear sits on a frosted paper disc so it lifts off the busy hero */
+    .settings-btn {
+      width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0; cursor: pointer;
+      border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+      background: color-mix(in srgb, var(--paper) 80%, transparent);
+      -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+      color: var(--ink); display: grid; place-items: center;
+      box-shadow: 0 2px 8px -3px hsl(30 30% 20% / 0.28);
+    }
+    .settings-btn svg { width: 22px; height: 22px; }
+
+    .day-hero { padding: 6px 22px 20px; }
+    .day-date { font-family: var(--font-hand); font-weight: 700; font-size: 44px; line-height: 0.98; color: var(--accent-deep); margin: 0; }
+    .day-meta { margin-top: 6px; }
+    .day-meta .count { font-size: 13.5px; color: var(--ink-soft); }
+    .day-meta .count strong { color: var(--ink); font-weight: 600; }
+    .day-date, .brand-name {
+      text-shadow:
+              -1px -1px 0 var(--paper), 1px -1px 0 var(--paper),
+              -1px  1px 0 var(--paper), 1px  1px 0 var(--paper),
+              0 0 12px var(--paper), 0 0 24px var(--paper);
+    }
+
+    .day-scroll { flex: 1; overflow: hidden; padding: 4px 18px 120px; display: flex; flex-direction: column; gap: 22px; }
+
+    .cat-group { --c: var(--ink); }
+    .cat-group.is-wife { --c: var(--c-wife); } .cat-group.is-family { --c: var(--c-family); }
+    .cat-group.is-nature { --c: var(--c-nature); } .cat-group.is-me { --c: var(--c-me); }
+    .cat-group.is-god { --c: var(--c-god); }
+
+    .cat-head { display: flex; align-items: center; gap: 9px; margin: 0 0 11px; padding-left: 4px; font-family: var(--font-hand); font-weight: 700; font-size: 28px; line-height: 1; color: var(--c); }
+    .cat-head .cat-icon { width: 19px; height: 19px; flex-shrink: 0; color: var(--c); opacity: 0.92; }
+
+    .entry-list { display: flex; flex-direction: column; gap: 11px; }
+
+    /* ---- hand-drawn crayon entry card (LOCKED, from day-view-mockup-4) ---- */
+    .entry { position: relative; padding: 13px 16px 11px; border-radius: 16px; cursor: pointer; transition: transform 90ms ease; z-index: 1; }
+    .entry:active { transform: scale(0.992); }
+    .entry::before, .entry::after { content: ""; position: absolute; pointer-events: none; border: 1.2px solid color-mix(in srgb, var(--c) 75%, transparent); }
+    /* inner line + dense hatch, edges softened by a faint "eraser" inset glow */
+    .entry::before {
+      inset: 0; z-index: -2;
+      background-color: color-mix(in srgb, var(--c) 3%, var(--card));
+      box-shadow:
+              inset 3px 2px 8px 2px color-mix(in srgb, var(--c) 3%, var(--card)),
+              inset -4px -3px 10px 2px color-mix(in srgb, var(--c) 3%, var(--card)),
+              inset -1px 1px 8px 2px color-mix(in srgb, var(--c) 3%, var(--card));
+      background-image:
+              repeating-linear-gradient(-52deg, transparent, transparent 1.5px, color-mix(in srgb, var(--c) 16%, transparent) 1.5px, color-mix(in srgb, var(--c) 16%, transparent) 3px),
+              repeating-linear-gradient(-43deg, transparent, transparent 3px, color-mix(in srgb, var(--c) 12%, transparent) 3px, color-mix(in srgb, var(--c) 12%, transparent) 6px),
+              repeating-linear-gradient(-61deg, transparent, transparent 5px, color-mix(in srgb, var(--c) 9%, transparent) 5px, color-mix(in srgb, var(--c) 9%, transparent) 10px),
+              repeating-linear-gradient(-32deg, transparent, transparent 9px, color-mix(in srgb, var(--c) 3%, transparent) 9px, color-mix(in srgb, var(--c) 3%, transparent) 13px);
+    }
+    .entry::after { inset: -0.5px; z-index: -1; }
+    /* three sketch variants cycled so neighbours differ (8-value radii bow the straight edges) */
+    .entry.s1::before { filter: url(#sketch1); border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; transform: rotate(0.4deg); }
+    .entry.s1::after  { filter: url(#sketch2); border-radius: 15px 255px 15px 225px / 255px 15px 225px 15px; transform: rotate(-0.5deg); }
+    .entry.s2::before { filter: url(#sketch2); border-radius: 20px 300px 10px 250px / 250px 15px 300px 20px; transform: rotate(-0.6deg); }
+    .entry.s2::after  { filter: url(#sketch3); border-radius: 300px 20px 250px 10px / 15px 250px 20px 300px; transform: rotate(0.3deg); }
+    .entry.s3::before { filter: url(#sketch3); border-radius: 250px 20px 280px 15px / 15px 280px 20px 250px; transform: rotate(0.5deg); }
+    .entry.s3::after  { filter: url(#sketch1); border-radius: 15px 250px 20px 280px / 280px 15px 250px 20px; transform: rotate(-0.4deg); }
+
+    .entry-text {
+      margin: 0; font-size: 16px; line-height: 1.5; font-weight: 500; letter-spacing: -0.003em;
+      color: hsl(30 15% 15%);
+      text-shadow: 0 1px 1px var(--card), 0 -1px 1px var(--card), 1px 0 1px var(--card), -1px 0 1px var(--card);
+    }
+    .entry-time { display: block; text-align: right; margin: 2px 0 0; font-family: var(--font-hand); font-weight: 600; font-size: 16px; color: var(--ink-faint); opacity: 0.7; line-height: 1; }
+
+    .fab {
+      position: absolute; right: 18px; bottom: 22px; z-index: 6;
+      width: 60px; height: 60px; border-radius: 50%; border: none;
+      background: var(--accent); color: hsl(40 60% 98%); display: grid; place-items: center; cursor: pointer;
+      box-shadow: 0 12px 26px -8px var(--accent), 0 4px 10px -4px hsl(0 0% 0% / 0.25);
+      transition: transform 120ms ease;
+    }
+    .fab svg { width: 28px; height: 28px; }
+    .fab:active { transform: scale(0.94); }
+    .screen-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 96px; z-index: 4; pointer-events: none; background: linear-gradient(to top, var(--paper) 14%, transparent); }
+
+    /* stagger entrance */
+    .stagger > * { opacity: 0; transform: translateY(10px); animation: rise 620ms cubic-bezier(0.2,0.7,0.2,1) forwards; }
+    .stagger > *:nth-child(1) { animation-delay: 80ms; } .stagger > *:nth-child(2) { animation-delay: 160ms; }
+    .stagger > *:nth-child(3) { animation-delay: 240ms; } .stagger > *:nth-child(4) { animation-delay: 320ms; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .stagger > * { opacity: 1; transform: none; animation: none; } }
+
+    /* ---- compose surface ---- */
+    .compose { position: relative; z-index: 2; display: flex; flex-direction: column; flex: 1; }
+    .compose-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 0; }
+    .icon-btn {
+      width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0; cursor: pointer;
+      border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+      background: color-mix(in srgb, var(--paper) 80%, transparent);
+      -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+      color: var(--ink); display: grid; place-items: center;
+      box-shadow: 0 2px 8px -3px hsl(30 30% 20% / 0.28);
+    }
+    .icon-btn svg { width: 22px; height: 22px; }
+    .compose-body { flex: 1; padding: 14px 24px 8px; display: flex; flex-direction: column; }
+    .compose-date { font-family: var(--font-hand); font-weight: 700; font-size: 25px; line-height: 1; color: var(--accent-deep); margin: 4px 0 0; }
+    .compose-prompt { font-family: var(--font-hand); font-weight: 700; font-size: 38px; line-height: 1.02; color: var(--ink); margin: 8px 0 22px; max-width: 14ch; }
+    .compose-date, .compose-prompt {
+      text-shadow:
+              -1px -1px 0 var(--paper), 1px -1px 0 var(--paper),
+              -1px  1px 0 var(--paper), 1px  1px 0 var(--paper),
+              0 0 12px var(--paper), 0 0 22px var(--paper);
+    }
+    .compose-field { min-height: 120px; }
+    .compose-field p { margin: 0; font-size: 18px; line-height: 1.62; font-weight: 500; }
+    .compose-field .placeholder { color: var(--ink-faint); font-weight: 400; }
+    .compose-field .typed { color: hsl(30 15% 15%); }
+    .caret { display: inline-block; width: 2px; height: 1.1em; vertical-align: -0.18em; margin-left: 1px; background: var(--accent); border-radius: 1px; animation: blink 1.1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .field-label { font-size: 11.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin: 24px 0 13px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+      --c: var(--ink-soft);
+      position: relative; display: inline-flex; align-items: center; gap: 8px;
+      min-height: 44px; padding: 10px 16px; border-radius: 14px; cursor: pointer;
+      font-family: var(--font-body); font-weight: 600; font-size: 14.5px; color: var(--ink-soft);
+      background: transparent; border: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
+      transition: color 120ms ease;
+    }
+    .chip svg { width: 18px; height: 18px; color: var(--ink-faint); flex-shrink: 0; }
+    .chip.is-wife { --c: var(--c-wife); } .chip.is-family { --c: var(--c-family); }
+    .chip.is-nature { --c: var(--c-nature); } .chip.is-me { --c: var(--c-me); }
+    .chip.is-god { --c: var(--c-god); }
+    /* selected chip = the entry card's crayon treatment, scaled down */
+    .chip.sel { color: var(--c); border-color: transparent; z-index: 1; text-shadow: 0 1px 0 var(--card), 0 0 3px var(--card); }
+    .chip.sel svg { color: var(--c); }
+    .chip.sel::before, .chip.sel::after { content: ""; position: absolute; pointer-events: none; border: 1.2px solid color-mix(in srgb, var(--c) 75%, transparent); }
+    .chip.sel::before {
+      inset: 0; z-index: -2;
+      background-color: color-mix(in srgb, var(--c) 4%, var(--card));
+      box-shadow:
+              inset 2px 2px 5px 1px color-mix(in srgb, var(--c) 4%, var(--card)),
+              inset -3px -2px 6px 1px color-mix(in srgb, var(--c) 4%, var(--card)),
+              inset -1px 1px 5px 1px color-mix(in srgb, var(--c) 4%, var(--card));
+      background-image:
+              repeating-linear-gradient(-52deg, transparent, transparent 1.5px, color-mix(in srgb, var(--c) 17%, transparent) 1.5px, color-mix(in srgb, var(--c) 17%, transparent) 3px),
+              repeating-linear-gradient(-43deg, transparent, transparent 3px, color-mix(in srgb, var(--c) 12%, transparent) 3px, color-mix(in srgb, var(--c) 12%, transparent) 6px),
+              repeating-linear-gradient(-61deg, transparent, transparent 5px, color-mix(in srgb, var(--c) 9%, transparent) 5px, color-mix(in srgb, var(--c) 9%, transparent) 10px);
+      filter: url(#chip1); border-radius: 16px 7px 15px 9px / 9px 15px 7px 16px; transform: rotate(0.5deg);
+    }
+    .chip.sel::after { inset: -2px; z-index: -1; filter: url(#chip2); border-radius: 7px 16px 9px 15px / 16px 7px 15px 9px; transform: rotate(-0.6deg); }
+
+    .compose-foot { position: relative; padding: 16px 22px 24px; }
+    .compose-foot::before { content: ""; position: absolute; left: 0; right: 0; top: -40px; height: 40px; pointer-events: none; background: linear-gradient(to top, var(--paper) 20%, transparent); }
+    .add-btn {
+      width: 100%; min-height: 54px; border: none; border-radius: 16px; cursor: pointer;
+      background: var(--accent); color: hsl(40 60% 98%);
+      font-family: var(--font-body); font-weight: 700; font-size: 16px; letter-spacing: 0.01em;
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      box-shadow: 0 12px 26px -8px var(--accent), 0 4px 10px -4px hsl(0 0% 0% / 0.22);
+      transition: transform 120ms ease;
+    }
+    .add-btn svg { width: 22px; height: 22px; }
+    .add-btn:active { transform: scale(0.985); }
+    .add-btn.is-disabled { background: color-mix(in srgb, var(--ink) 16%, var(--paper)); color: var(--ink-faint); box-shadow: none; cursor: default; }
+
+    .footnote { margin-top: 40px; font-size: 13px; color: hsl(30 10% 44%); line-height: 1.6; max-width: 80ch; }
+    .footnote strong { color: hsl(30 16% 30%); }
+  </style>
+</head>
+<body>
+
+<!-- shared SVG defs: card sketch filters (#sketch1/2/3) + smaller chip filters (#chip1/2) + symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="sketch1" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.6"/>
+    </filter>
+    <filter id="sketch2" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="2" seed="24" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.6"/>
+    </filter>
+    <filter id="sketch3" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="41" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.6"/>
+    </filter>
+    <filter id="chip1" x="-14%" y="-14%" width="128%" height="128%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.5"/>
+    </filter>
+    <filter id="chip2" x="-14%" y="-14%" width="128%" height="128%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="2" seed="24" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.5"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- icon sprite (reused via <use href>) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="ic-heart"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></g>
+    <g id="ic-leaf"><path d="M5 21c0-9 6-15 14-16 1 9-5 16-14 16z"/><path d="M5 21c4-6 8-9 12-10"/></g>
+    <g id="ic-family"><circle cx="9" cy="8" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a2.8 2.8 0 0 1 0 5.4"/><path d="M16.5 14.2a4.5 4.5 0 0 1 4 5.3"/></g>
+    <g id="ic-me"><circle cx="12" cy="8" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></g>
+    <g id="ic-cross"><path d="M12 3v18"/><path d="M7 8.5h10"/></g>
+    <g id="ic-plus"><path d="M12 5v14M5 12h14"/></g>
+    <g id="ic-close"><path d="M6 6l12 12M18 6L6 18"/></g>
+    <g id="ic-gear"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></g>
+  </defs>
+</svg>
+
+<div class="doc">
+
+  <!-- ============ HEAD ============ -->
+  <header class="doc-head">
+    <div class="brand-row">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg></span>
+      <span class="wordmark">Gratitude</span>
+    </div>
+    <h1>Style guide</h1>
+    <p>The single source of truth for Phase 3. A warm, hand-kept journal whose signature is <strong>seasonality</strong> — the whole canvas shifts through six UK mini-seasons. Handwriting (Caveat) for the voice, a warm humanist sans (Figtree) for the words, fixed per-category colours, hand-drawn crayon entry cards, and a painterly watercolour hero per season. <strong>Light only</strong> by design.</p>
+    <p class="ver">Phase 2 · style guide · light-only · fonts Caveat + Figtree (OFL)</p>
+  </header>
+
+  <hr class="rule">
+
+  <!-- ============ TYPOGRAPHY ============ -->
+  <section class="block">
+    <p class="eyebrow">Foundations</p>
+    <h2>Type</h2>
+    <p class="lead">Two families, both OFL / self-hostable. <b>Caveat</b> carries the personality — wordmark, day dates, category headings, timestamps. <b>Figtree</b> does the reading work — entry text, labels, buttons. Handwriting stays precious to structure; the words people write are always the clean sans.</p>
+    <div class="specimen">
+      <div class="spec-row"><div class="spec-tag"><b>Caveat 700</b>wordmark / title</div><div class="sp-hand-xl">Gratitude</div></div>
+      <div class="spec-row"><div class="spec-tag"><b>Caveat 700</b>day date · accent-deep</div><div class="sp-hand-date">Sunday, 25 May</div></div>
+      <div class="spec-row"><div class="spec-tag"><b>Caveat 700</b>category heading · category colour</div><div class="sp-hand-cat">Nature</div></div>
+      <div class="spec-row"><div class="spec-tag"><b>Figtree 400/500</b>entry &amp; body text</div><div class="sp-body">The hawthorn blossom along the lane this morning — thick and white, the whole hedgerow humming with bees.</div></div>
+      <div class="spec-row"><div class="spec-tag"><b>Figtree 700</b>labels · tracked uppercase</div><div class="sp-label">Which part of life?</div></div>
+    </div>
+  </section>
+
+  <!-- ============ CATEGORY COLOURS ============ -->
+  <section class="block">
+    <p class="eyebrow">Foundations</p>
+    <h2>Category colours</h2>
+    <p class="lead">Five life areas, each a fixed colour and line-icon that stay constant across every season. <b>God = a simple cross.</b> Wife shows as “Bella”. These tint the category heading and its cards' crayon hatch.</p>
+    <div class="swatches">
+      <div class="sw"><div class="sw-chip" style="background:var(--c-wife)"><svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg></div><div class="sw-name">Bella (wife)</div><div class="sw-val">hsl(348 54% 52%)</div></div>
+      <div class="sw"><div class="sw-chip" style="background:var(--c-family)"><svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-family"/></svg></div><div class="sw-name">Family</div><div class="sw-val">hsl(32 62% 47%)</div></div>
+      <div class="sw"><div class="sw-chip" style="background:var(--c-nature)"><svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg></div><div class="sw-name">Nature</div><div class="sw-val">hsl(134 34% 38%)</div></div>
+      <div class="sw"><div class="sw-chip" style="background:var(--c-me)"><svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-me"/></svg></div><div class="sw-name">Me</div><div class="sw-val">hsl(202 30% 45%)</div></div>
+      <div class="sw"><div class="sw-chip" style="background:var(--c-god)"><svg class="cat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg></div><div class="sw-name">God</div><div class="sw-val">hsl(265 32% 52%)</div></div>
+    </div>
+  </section>
+
+  <!-- ============ SEASONAL THEMES ============ -->
+  <section class="block">
+    <p class="eyebrow">Foundations</p>
+    <h2>Six seasons</h2>
+    <p class="lead">The app's signature. The accent (date + FAB + buttons), the radial washes, and the hero watercolour all rotate by mini-season; paper stays warm cream throughout — even Winter — so it never reads as “the blue app”. Each card shows its hero and a swatch row: <b>accent · accent-deep · paper · card</b>.</p>
+    <div class="seasons">
+      <div class="season-card theme-spring"><div class="season-thumb" style="background-image:url('springhero.jpg')"></div><div class="season-body"><h3 style="color:var(--accent-deep)">Spring</h3><div class="months">Mar–Apr · narcissus green-gold</div><div class="season-dots"><span style="background:var(--accent)"></span><span style="background:var(--accent-deep)"></span><span style="background:var(--paper)"></span><span style="background:var(--card)"></span></div></div></div>
+      <div class="season-card theme-earlysummer"><div class="season-thumb" style="background-image:url('earlysummerhero.jpg')"></div><div class="season-body"><h3 style="color:var(--accent-deep)">Early Summer</h3><div class="months">May–Jun · blossom rose</div><div class="season-dots"><span style="background:var(--accent)"></span><span style="background:var(--accent-deep)"></span><span style="background:var(--paper)"></span><span style="background:var(--card)"></span></div></div></div>
+      <div class="season-card theme-latesummer"><div class="season-thumb" style="background-image:url('latesummerhero.jpg')"></div><div class="season-body"><h3 style="color:var(--accent-deep)">Late Summer</h3><div class="months">Jul–Sep · sun-gold</div><div class="season-dots"><span style="background:var(--accent)"></span><span style="background:var(--accent-deep)"></span><span style="background:var(--paper)"></span><span style="background:var(--card)"></span></div></div></div>
+      <div class="season-card theme-autumn"><div class="season-thumb" style="background-image:url('autumnhero.jpg')"></div><div class="season-body"><h3 style="color:var(--accent-deep)">Autumn</h3><div class="months">Oct–Nov · russet</div><div class="season-dots"><span style="background:var(--accent)"></span><span style="background:var(--accent-deep)"></span><span style="background:var(--paper)"></span><span style="background:var(--card)"></span></div></div></div>
+      <div class="season-card theme-advent"><div class="season-thumb" style="background-image:url('adventhero.jpg')"></div><div class="season-body"><h3 style="color:var(--accent-deep)">Advent</h3><div class="months">Dec · liturgical violet + candle-gold</div><div class="season-dots"><span style="background:var(--accent)"></span><span style="background:var(--accent-deep)"></span><span style="background:var(--paper)"></span><span style="background:var(--card)"></span></div></div></div>
+      <div class="season-card theme-winter"><div class="season-thumb" style="background-image:url('winterhero.jpg')"></div><div class="season-body"><h3 style="color:var(--accent-deep)">Winter</h3><div class="months">Jan–Feb · frost slate-periwinkle</div><div class="season-dots"><span style="background:var(--accent)"></span><span style="background:var(--accent-deep)"></span><span style="background:var(--paper)"></span><span style="background:var(--card)"></span></div></div></div>
+    </div>
+  </section>
+
+  <!-- ============ COMPONENTS ============ -->
+  <section class="block">
+    <p class="eyebrow">Components</p>
+    <h2>Parts</h2>
+    <p class="lead">The hand-drawn pieces, shown on Early Summer paper. The entry card's wobble comes from an SVG turbulence/displacement filter on a doubled border (three seeds cycled so neighbours differ); only the outline is filtered, so text stays crisp. The selected chip reuses the same ink at chip scale.</p>
+    <div class="bench theme-earlysummer">
+      <div class="bench-item">
+        <div class="bench-tag">Entry card — three variants (s1 / s2 / s3)</div>
+        <div class="bench-pad" style="width:300px; display:flex; flex-direction:column; gap:11px;">
+          <div class="cat-group is-nature">
+            <div class="entry-list">
+              <article class="entry s1"><p class="entry-text">First swifts back over the garden at dusk.</p><span class="entry-time">9.02</span></article>
+              <article class="entry s2"><p class="entry-text">Hawthorn thick and white along the lane.</p><span class="entry-time">8.14</span></article>
+              <article class="entry s3"><p class="entry-text">Bees in the blossom all morning.</p><span class="entry-time">8.40</span></article>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bench-item">
+        <div class="bench-tag">Category chips — quiet, and selected (inked)</div>
+        <div class="bench-pad" style="width:300px;">
+          <div class="chips">
+            <button class="chip is-nature sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg>Nature</button>
+            <button class="chip is-wife"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg>Bella</button>
+            <button class="chip is-god"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg>God</button>
+          </div>
+        </div>
+      </div>
+      <div class="bench-item">
+        <div class="bench-tag">FAB · gear · primary button</div>
+        <div class="bench-pad" style="width:300px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;">
+          <button class="fab" style="position:relative; right:auto; bottom:auto;" aria-label="Add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg></button>
+          <button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-gear"/></svg></button>
+          <button class="add-btn" style="width:auto; padding:0 22px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg>Add to today</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DAY VIEW · ALL SIX SEASONS ============ -->
+  <section class="block">
+    <p class="eyebrow">Screens</p>
+    <h2>The day, six ways</h2>
+    <p class="lead">The home screen — one day, entries grouped by category, chronological within a group. Same structure every month; only the season changes the accent, washes and hero. Floating + FAB bottom-right for one-handed reach.</p>
+    <div class="frames">
+
+      <!-- Spring -->
+      <div class="frame-wrap"><span class="frame-tag">Spring · 30 Mar</span>
+        <div class="phone"><div class="screen theme-spring">
+          <div class="hero"></div>
+          <header class="app-header"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg></span><span class="brand-name">Gratitude</span><button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-gear"/></svg></button></header>
+          <div class="day-hero"><h2 class="day-date">Sunday, 30 Mar</h2><div class="day-meta"><span class="count"><strong>4</strong> things today</span></div></div>
+          <div class="day-scroll stagger">
+            <section class="cat-group is-nature"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg>Nature</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">The daffodils along the verge finally open — a whole bank of them nodding in the wind.</p><span class="entry-time">9.10</span></article><article class="entry s2"><p class="entry-text">First proper warmth on my face at lunchtime.</p><span class="entry-time">1.05</span></article></div></section>
+            <section class="cat-group is-family"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-family"/></svg>Family</h3><div class="entry-list"><article class="entry s3"><p class="entry-text">Astrid found frogspawn in the pond and couldn't stop talking about it.</p><span class="entry-time">4.20</span></article></div></section>
+            <section class="cat-group is-god"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg>God</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">Lent feels lighter this year. A sense of things coming back to life.</p><span class="entry-time">7.40</span></article></div></section>
+          </div>
+          <div class="screen-fade"></div>
+          <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg></button>
+        </div></div>
+      </div>
+
+      <!-- Early Summer -->
+      <div class="frame-wrap"><span class="frame-tag">Early Summer · 25 May</span>
+        <div class="phone"><div class="screen theme-earlysummer">
+          <div class="hero"></div>
+          <header class="app-header"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg></span><span class="brand-name">Gratitude</span><button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-gear"/></svg></button></header>
+          <div class="day-hero"><h2 class="day-date">Sunday, 25 May</h2><div class="day-meta"><span class="count"><strong>5</strong> things today</span></div></div>
+          <div class="day-scroll stagger">
+            <section class="cat-group is-nature"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg>Nature</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">The hawthorn blossom along the lane this morning — thick and white, the whole hedgerow humming with bees.</p><span class="entry-time">8.14</span></article><article class="entry s2"><p class="entry-text">First swifts back over the garden, screaming round the chimney at dusk.</p><span class="entry-time">9.02</span></article></div></section>
+            <section class="cat-group is-wife"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg>Bella</h3><div class="entry-list"><article class="entry s3"><p class="entry-text">She made coffee and brought it out to the step so we could watch the bees together.</p><span class="entry-time">8.30</span></article></div></section>
+            <section class="cat-group is-god"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg>God</h3><div class="entry-list"><article class="entry s2"><p class="entry-text">Quiet ten minutes on the step before anyone was up. Grateful just to be held.</p><span class="entry-time">7.50</span></article></div></section>
+          </div>
+          <div class="screen-fade"></div>
+          <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg></button>
+        </div></div>
+      </div>
+
+      <!-- Late Summer -->
+      <div class="frame-wrap"><span class="frame-tag">Late Summer · 16 Aug</span>
+        <div class="phone"><div class="screen theme-latesummer">
+          <div class="hero"></div>
+          <header class="app-header"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg></span><span class="brand-name">Gratitude</span><button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-gear"/></svg></button></header>
+          <div class="day-hero"><h2 class="day-date">Saturday, 16 Aug</h2><div class="day-meta"><span class="count"><strong>4</strong> things today</span></div></div>
+          <div class="day-scroll stagger">
+            <section class="cat-group is-nature"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg>Nature</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">The field behind us is full of sunflowers, all facing the same way at dawn.</p><span class="entry-time">6.50</span></article><article class="entry s2"><p class="entry-text">Swam in the river after work — cold and perfect.</p><span class="entry-time">6.30</span></article></div></section>
+            <section class="cat-group is-wife"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg>Bella</h3><div class="entry-list"><article class="entry s3"><p class="entry-text">We sat out till the bats came. She didn't want to go in, and neither did I.</p><span class="entry-time">9.40</span></article></div></section>
+            <section class="cat-group is-me"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-me"/></svg>Me</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">Finished the book I'd been carrying around all summer.</p><span class="entry-time">3.15</span></article></div></section>
+          </div>
+          <div class="screen-fade"></div>
+          <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg></button>
+        </div></div>
+      </div>
+
+      <!-- Autumn -->
+      <div class="frame-wrap"><span class="frame-tag">Autumn · 14 Oct</span>
+        <div class="phone"><div class="screen theme-autumn">
+          <div class="hero"></div>
+          <header class="app-header"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg></span><span class="brand-name">Gratitude</span><button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-gear"/></svg></button></header>
+          <div class="day-hero"><h2 class="day-date">Tuesday, 14 Oct</h2><div class="day-meta"><span class="count"><strong>5</strong> things today</span></div></div>
+          <div class="day-scroll stagger">
+            <section class="cat-group is-nature"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg>Nature</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">The big beech at the corner has gone full copper overnight. Walked the long way just to stand under it.</p><span class="entry-time">8.40</span></article><article class="entry s2"><p class="entry-text">Conkers all over the path — Astrid filled both pockets.</p><span class="entry-time">4.10</span></article></div></section>
+            <section class="cat-group is-family"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-family"/></svg>Family</h3><div class="entry-list"><article class="entry s3"><p class="entry-text">Soup and bread with the whole family round the table. Nobody in a hurry to leave.</p><span class="entry-time">6.30</span></article></div></section>
+            <section class="cat-group is-god"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg>God</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">Harvest gratitude — a year of provision, even the hard months. He's been faithful.</p><span class="entry-time">9.20</span></article></div></section>
+          </div>
+          <div class="screen-fade"></div>
+          <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg></button>
+        </div></div>
+      </div>
+
+      <!-- Advent -->
+      <div class="frame-wrap"><span class="frame-tag">Advent · 14 Dec</span>
+        <div class="phone"><div class="screen theme-advent">
+          <div class="hero"></div>
+          <header class="app-header"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg></span><span class="brand-name">Gratitude</span><button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-gear"/></svg></button></header>
+          <div class="day-hero"><h2 class="day-date">Sunday, 14 Dec</h2><div class="day-meta"><span class="count"><strong>4</strong> things today</span></div></div>
+          <div class="day-scroll stagger">
+            <section class="cat-group is-family"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-family"/></svg>Family</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">Lit the third candle on the wreath together — the kids' faces in the dark.</p><span class="entry-time">5.30</span></article><article class="entry s2"><p class="entry-text">Wrapping presents with carols on, nowhere else to be.</p><span class="entry-time">8.10</span></article></div></section>
+            <section class="cat-group is-god"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg>God</h3><div class="entry-list"><article class="entry s3"><p class="entry-text">The waiting of Advent. Glad to sit in the hush before it all.</p><span class="entry-time">7.00</span></article></div></section>
+            <section class="cat-group is-wife"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg>Bella</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">Mulled wine and the tree lights, just the two of us once they were asleep.</p><span class="entry-time">10.15</span></article></div></section>
+          </div>
+          <div class="screen-fade"></div>
+          <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg></button>
+        </div></div>
+      </div>
+
+      <!-- Winter -->
+      <div class="frame-wrap"><span class="frame-tag">Winter · 23 Jan</span>
+        <div class="phone"><div class="screen theme-winter">
+          <div class="hero"></div>
+          <header class="app-header"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg></span><span class="brand-name">Gratitude</span><button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-gear"/></svg></button></header>
+          <div class="day-hero"><h2 class="day-date">Friday, 23 Jan</h2><div class="day-meta"><span class="count"><strong>3</strong> things today</span></div></div>
+          <div class="day-scroll stagger">
+            <section class="cat-group is-nature"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg>Nature</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">Hard frost on every twig this morning — the whole garden silvered.</p><span class="entry-time">8.05</span></article><article class="entry s2"><p class="entry-text">Snowdrops already up under the hedge.</p><span class="entry-time">12.40</span></article></div></section>
+            <section class="cat-group is-me"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-me"/></svg>Me</h3><div class="entry-list"><article class="entry s3"><p class="entry-text">A slow morning with coffee and no plans. Needed it.</p><span class="entry-time">9.30</span></article></div></section>
+            <section class="cat-group is-god"><h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg>God</h3><div class="entry-list"><article class="entry s1"><p class="entry-text">Stillness. Grateful for rest, and for the light getting longer.</p><span class="entry-time">6.45</span></article></div></section>
+          </div>
+          <div class="screen-fade"></div>
+          <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg></button>
+        </div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ COMPOSE ============ -->
+  <section class="block">
+    <p class="eyebrow">Screens</p>
+    <h2>Writing one down</h2>
+    <p class="lead">The + FAB opens a calm, full-screen compose page — the season's motif overhead, a handwritten prompt, the words straight on the paper, category as a quiet row of chips. The primary button sits at the bottom in thumb reach and only lights up once there's something to keep.</p>
+    <div class="frames">
+
+      <div class="frame-wrap"><span class="frame-tag">Empty · Early Summer</span>
+        <div class="phone"><div class="screen theme-earlysummer">
+          <div class="hero"></div>
+          <div class="compose">
+            <div class="compose-top"><button class="icon-btn" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-close"/></svg></button></div>
+            <div class="compose-body">
+              <p class="compose-date">Sunday, 25 May</p>
+              <p class="compose-prompt">What are you grateful for?</p>
+              <div class="compose-field"><p class="placeholder">Write it down…<span class="caret"></span></p></div>
+              <p class="field-label">Which part of life?</p>
+              <div class="chips">
+                <button class="chip is-wife"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg>Bella</button>
+                <button class="chip is-family"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-family"/></svg>Family</button>
+                <button class="chip is-nature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg>Nature</button>
+                <button class="chip is-me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-me"/></svg>Me</button>
+                <button class="chip is-god"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg>God</button>
+              </div>
+            </div>
+            <div class="compose-foot"><button class="add-btn is-disabled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg>Add to today</button></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="frame-wrap"><span class="frame-tag">Mid-thought · Autumn · Nature chosen</span>
+        <div class="phone"><div class="screen theme-autumn">
+          <div class="hero"></div>
+          <div class="compose">
+            <div class="compose-top"><button class="icon-btn" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-close"/></svg></button></div>
+            <div class="compose-body">
+              <p class="compose-date">Tuesday, 14 Oct</p>
+              <p class="compose-prompt">What are you grateful for?</p>
+              <div class="compose-field"><p class="typed">The big beech at the corner has gone full copper overnight. Walked the long way just to stand under it.<span class="caret"></span></p></div>
+              <p class="field-label">Which part of life?</p>
+              <div class="chips">
+                <button class="chip is-wife"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-heart"/></svg>Bella</button>
+                <button class="chip is-family"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-family"/></svg>Family</button>
+                <button class="chip is-nature sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-leaf"/></svg>Nature</button>
+                <button class="chip is-me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-me"/></svg>Me</button>
+                <button class="chip is-god"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cross"/></svg>God</button>
+              </div>
+            </div>
+            <div class="compose-foot"><button class="add-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-plus"/></svg>Add to today</button></div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <p class="footnote">
+    <strong>Phase 2 deliverable.</strong> Everything here is locked: type (Caveat + Figtree), the five fixed category colours, the six seasonal themes, the hand-drawn crayon entry card, the category chip, FAB / frosted gear / primary button, the day-view, and the full-screen compose. <strong>Light only</strong> — no dark theme. Next (Phase 3): vendor Caveat + Figtree as <code>.woff2</code> into <code>assets/fonts/</code>, move the six heroes into <code>assets/</code>, and implement against these tokens.
+  </p>
+</div>
+</body>
+</html>
