@@ -46,12 +46,21 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
 - **Category sub-headings LOCKED: Caveat** (option A), inked in each category's own muted
   colour. Category colours (fixed across seasons): wife `hsl(348 54% 52%)`, family
   `hsl(32 62% 47%)`, nature `hsl(134 34% 38%)`, me `hsl(202 30% 45%)`, god `hsl(265 32% 52%)`.
-- **Day-view direction LOCKED** (`notes/day-view-mockup.html`, built with frontend-design
-  skill): entries **grouped by category**, chronological within group with a faint
-  timestamp; soft category-tinted entry cards w/ 3px coloured edge; **warm ink, not black**;
-  colour comes from season accent (date + FAB) + per-category heading hues; **floating +
-  FAB** bottom-right (thumb reach); paper-grain + seasonal radial wash; load stagger.
-  Mockup shows Early Summer + Autumn to demonstrate the rotation.
+- **Day-view direction LOCKED** (latest: `notes/day-view-mockup-2.html`; v1
+  `day-view-mockup.html` kept for history): entries **grouped by category**, chronological
+  within group; **warm ink, not black**; colour from season accent (date + FAB) +
+  per-category heading hues + soft category-tinted card fill. **Floating + FAB** bottom-right
+  (thumb reach); paper-grain + seasonal radial wash; load stagger. Andy loves the palette.
+- **Hand-drawn entry borders** (v2): SVG `feTurbulence`+`feDisplacementMap` filter wobbles
+  each card's outline (3 seeds `#sketch1/2/3` + tiny rotations, cycled via `.s1/.s2/.s3` so
+  neighbours differ); filter on the border-only `::before` so text stays crisp. **Left
+  accent bar removed.** Header + soft palette carry the colour.
+- **Seasonal hero motif** (v2): vendored SVG band at top, fades into paper. Early Summer =
+  blossom, Autumn = leaves. Motifs matched to real month (May = blossom, NOT sunflowers —
+  those slot into Late Summer). Still need: Spring shoots, Late Summer sunflowers, Advent
+  candle/star, Winter snowflakes.
+- **Timestamp** = faint right-aligned **Caveat** scribble (almost hidden). Andy unsure it's
+  needed — keep optional.
 
 ## Next 2-3 steps (Phase 2 → close)
 
