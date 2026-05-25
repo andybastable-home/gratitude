@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Gratitude — day view (grouped, seasonal, in colour)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       Shared category colours (fixed across all seasons)
+       ============================================================ */
+    :root {
+      --c-wife:   hsl(348 54% 52%);
+      --c-family: hsl(32 62% 47%);
+      --c-nature: hsl(134 34% 38%);
+      --c-me:     hsl(202 30% 45%);
+      --c-god:    hsl(265 32% 52%);
+
+      --r-md: 14px; --r-lg: 22px; --r-pill: 999px;
+      --font-hand: "Caveat", cursive;
+      --font-body: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    /* ---- Early Summer (current season) ---- */
+    .theme-earlysummer {
+      --accent:      hsl(345 60% 53%);
+      --accent-deep: hsl(345 60% 43%);
+      --accent-soft: hsl(345 58% 94%);
+      --ink:         hsl(345 22% 24%);
+      --ink-soft:    hsl(345 12% 45%);
+      --ink-faint:   hsl(345 10% 62%);
+      --paper:       hsl(36 46% 95%);
+      --card:        hsl(40 52% 98.5%);
+      --border:      hsl(36 28% 88%);
+      --border-soft: hsl(36 30% 92%);
+      --shadow:      hsl(345 30% 25% / 0.07);
+      --shadow-lg:   hsl(345 30% 25% / 0.14);
+      --wash-a:      hsl(345 60% 90% / 0.55);
+      --wash-b:      hsl(40 70% 88% / 0.5);
+    }
+    /* ---- Autumn (Oct–Nov) ---- */
+    .theme-autumn {
+      --accent:      hsl(20 64% 47%);
+      --accent-deep: hsl(18 62% 39%);
+      --accent-soft: hsl(26 64% 93%);
+      --ink:         hsl(24 26% 22%);
+      --ink-soft:    hsl(24 14% 42%);
+      --ink-faint:   hsl(24 12% 58%);
+      --paper:       hsl(34 40% 94%);
+      --card:        hsl(38 48% 98%);
+      --border:      hsl(30 26% 86%);
+      --border-soft: hsl(32 28% 91%);
+      --shadow:      hsl(24 30% 22% / 0.08);
+      --shadow-lg:   hsl(24 30% 22% / 0.16);
+      --wash-a:      hsl(20 64% 86% / 0.55);
+      --wash-b:      hsl(40 64% 84% / 0.5);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    button { font-family: inherit; }
+    svg { display: block; }
+
+    body {
+      font-family: var(--font-body);
+      background: hsl(35 24% 90%);
+      color: hsl(30 12% 25%);
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility; font-size: 16px; line-height: 1.55;
+    }
+    .page { max-width: 980px; margin: 0 auto; padding: 52px 24px 72px; }
+    .page-head { margin-bottom: 36px; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: hsl(345 40% 48%); margin: 0 0 8px; }
+    .page-head h1 { font-family: var(--font-hand); font-weight: 700; font-size: clamp(40px, 7vw, 58px); line-height: 1; margin: 0 0 12px; color: hsl(30 20% 22%); }
+    .page-head p { color: hsl(30 10% 40%); max-width: 64ch; margin: 0; font-size: 15px; }
+
+    .frames { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 28px; justify-items: center; }
+    .frame-wrap { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .frame-tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: hsl(30 10% 48%); }
+
+    /* ============================================================
+       Phone frame
+       ============================================================ */
+    .phone {
+      position: relative;
+      width: 100%; max-width: 384px;
+      border-radius: 34px;
+      padding: 7px;
+      background: hsl(30 12% 80%);
+      box-shadow: 0 30px 60px -28px hsl(30 30% 20% / 0.5), 0 8px 20px -10px hsl(30 30% 20% / 0.25);
+    }
+    .screen {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      min-height: 740px;
+      display: flex; flex-direction: column;
+      background:
+        radial-gradient(120% 80% at 8% 0%, var(--wash-a) 0%, transparent 46%),
+        radial-gradient(120% 80% at 100% 100%, var(--wash-b) 0%, transparent 52%),
+        var(--paper);
+      color: var(--ink);
+    }
+    /* paper grain */
+    .screen::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0.04; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .screen > * { position: relative; z-index: 1; }
+
+    /* ---- App header / banner ---- */
+    .app-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 18px 20px 14px;
+    }
+    .brand-mark {
+      width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0;
+      background: var(--accent); color: hsl(40 60% 98%);
+      display: grid; place-items: center;
+      box-shadow: 0 6px 14px -5px var(--accent);
+    }
+    .brand-mark svg { width: 21px; height: 21px; }
+    .brand-name { font-family: var(--font-hand); font-weight: 700; font-size: 30px; line-height: 1; color: var(--ink); flex: 1; }
+    .settings-btn {
+      width: 40px; height: 40px; border-radius: 11px; border: none; background: transparent;
+      color: var(--ink-soft); display: grid; place-items: center; cursor: pointer;
+    }
+    .settings-btn:active { background: hsl(0 0% 0% / 0.04); }
+
+    /* ---- Date hero ---- */
+    .day-hero { padding: 6px 22px 18px; }
+    .day-date { font-family: var(--font-hand); font-weight: 700; font-size: 46px; line-height: 0.98; color: var(--accent-deep); margin: 0; }
+    .day-meta { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .day-meta .count { font-size: 13.5px; color: var(--ink-soft); }
+    .day-meta .count strong { color: var(--ink); font-weight: 600; }
+    .season-chip {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+      color: var(--accent-deep); background: var(--accent-soft);
+      padding: 4px 11px; border-radius: var(--r-pill);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .season-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    /* ---- Scroll body ---- */
+    .day-scroll { flex: 1; overflow: hidden; padding: 4px 16px 120px; display: flex; flex-direction: column; gap: 22px; }
+
+    /* ---- Category group ---- */
+    .cat-group { --c: var(--ink); }
+    .cat-group.is-wife   { --c: var(--c-wife); }
+    .cat-group.is-family { --c: var(--c-family); }
+    .cat-group.is-nature { --c: var(--c-nature); }
+    .cat-group.is-me     { --c: var(--c-me); }
+    .cat-group.is-god    { --c: var(--c-god); }
+
+    .cat-head {
+      display: flex; align-items: center; gap: 9px;
+      margin: 0 0 10px; padding-left: 6px;
+      font-family: var(--font-hand); font-weight: 700; font-size: 27px; line-height: 1;
+      color: var(--c);
+    }
+    .cat-head .cat-icon { width: 19px; height: 19px; flex-shrink: 0; color: var(--c); opacity: 0.92; }
+    .cat-head .cat-count { font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-faint); margin-left: auto; padding-right: 4px; }
+
+    .entry-list { display: flex; flex-direction: column; gap: 8px; }
+    .entry {
+      position: relative;
+      background: color-mix(in srgb, var(--c) 7%, var(--card));
+      border: 1px solid color-mix(in srgb, var(--c) 16%, var(--border-soft));
+      border-radius: var(--r-md);
+      padding: 13px 15px 12px 16px;
+      box-shadow: 0 1px 2px var(--shadow);
+      cursor: pointer;
+      transition: transform 90ms ease, box-shadow 160ms ease;
+    }
+    .entry::before {
+      content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px;
+      border-radius: 3px; background: var(--c); opacity: 0.85;
+    }
+    .entry:active { transform: scale(0.99); }
+    .entry-text { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink); letter-spacing: -0.003em; }
+    .entry-time { margin: 6px 0 0; font-size: 11.5px; color: var(--ink-faint); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+
+    /* ---- Floating + button ---- */
+    .fab {
+      position: absolute; right: 18px; bottom: 22px; z-index: 6;
+      width: 60px; height: 60px; border-radius: 50%; border: none;
+      background: var(--accent); color: hsl(40 60% 98%);
+      display: grid; place-items: center; cursor: pointer;
+      box-shadow: 0 12px 26px -8px var(--accent), 0 4px 10px -4px hsl(0 0% 0% / 0.25);
+      transition: transform 120ms ease, box-shadow 160ms ease;
+    }
+    .fab svg { width: 28px; height: 28px; }
+    .fab:active { transform: scale(0.94); }
+    /* soft fade so content scrolls under the FAB cleanly */
+    .screen-fade {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 96px; z-index: 4; pointer-events: none;
+      background: linear-gradient(to top, var(--paper) 14%, transparent);
+    }
+
+    /* ---- entrance stagger ---- */
+    .stagger > * { opacity: 0; transform: translateY(10px); animation: rise 620ms cubic-bezier(0.2,0.7,0.2,1) forwards; }
+    .stagger > *:nth-child(1) { animation-delay: 80ms; }
+    .stagger > *:nth-child(2) { animation-delay: 160ms; }
+    .stagger > *:nth-child(3) { animation-delay: 240ms; }
+    .stagger > *:nth-child(4) { animation-delay: 320ms; }
+    .stagger > *:nth-child(5) { animation-delay: 400ms; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .stagger > * { opacity: 1; transform: none; animation: none; } }
+
+    .footnote { margin-top: 40px; font-size: 13px; color: hsl(30 10% 44%); line-height: 1.6; max-width: 74ch; }
+    .footnote strong { color: hsl(30 16% 30%); }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="page-head">
+      <p class="eyebrow">Phase 2 · day view · grouped + seasonal + in colour</p>
+      <h1>A day, kept by hand</h1>
+      <p>Entries grouped by category (chronological within each), every heading inked in its own muted colour, the whole screen tinted for the season, and a floating + in thumb reach. Warm ink instead of black. Left: this season (Early Summer). Right: the same day in Autumn, to show the rotation.</p>
+    </header>
+
+    <div class="frames">
+
+      <!-- ============== Early Summer ============== -->
+      <div class="frame-wrap">
+        <span class="frame-tag">Early Summer · May–Jun · blossom rose</span>
+        <div class="phone">
+          <div class="screen theme-earlysummer">
+
+            <header class="app-header">
+              <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg></span>
+              <span class="brand-name">Gratitude</span>
+              <button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+            </header>
+
+            <div class="day-hero">
+              <h2 class="day-date">Sunday, 25 May</h2>
+              <div class="day-meta">
+                <span class="count"><strong>5</strong> things today</span>
+                <span class="season-chip">Early Summer</span>
+              </div>
+            </div>
+
+            <div class="day-scroll stagger">
+
+              <section class="cat-group is-nature">
+                <h3 class="cat-head">
+                  <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-9 6-15 14-16 1 9-5 16-14 16z"/><path d="M5 21c4-6 8-9 12-10"/></svg>
+                  Nature <span class="cat-count">2</span>
+                </h3>
+                <div class="entry-list">
+                  <article class="entry"><p class="entry-text">The hawthorn blossom along the lane this morning — thick and white, the whole hedgerow humming with bees.</p><p class="entry-time">8:14 am</p></article>
+                  <article class="entry"><p class="entry-text">First swifts back over the garden, screaming round the chimney at dusk.</p><p class="entry-time">9:02 pm</p></article>
+                </div>
+              </section>
+
+              <section class="cat-group is-wife">
+                <h3 class="cat-head">
+                  <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg>
+                  My wife <span class="cat-count">1</span>
+                </h3>
+                <div class="entry-list">
+                  <article class="entry"><p class="entry-text">She made coffee and brought it out to the step so we could watch the bees together.</p><p class="entry-time">8:30 am</p></article>
+                </div>
+              </section>
+
+              <section class="cat-group is-family">
+                <h3 class="cat-head">
+                  <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a2.8 2.8 0 0 1 0 5.4"/><path d="M16.5 14.2a4.5 4.5 0 0 1 4 5.3"/></svg>
+                  Family <span class="cat-count">1</span>
+                </h3>
+                <div class="entry-list">
+                  <article class="entry"><p class="entry-text">Long phone call with Mum — she sounded brighter than she has in weeks.</p><p class="entry-time">2:47 pm</p></article>
+                </div>
+              </section>
+
+              <section class="cat-group is-god">
+                <h3 class="cat-head">
+                  <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M7 8.5h10"/></svg>
+                  God <span class="cat-count">1</span>
+                </h3>
+                <div class="entry-list">
+                  <article class="entry"><p class="entry-text">Quiet ten minutes on the step before anyone was up. Grateful just to be held.</p><p class="entry-time">7:50 am</p></article>
+                </div>
+              </section>
+
+            </div>
+
+            <div class="screen-fade"></div>
+            <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== Autumn ============== -->
+      <div class="frame-wrap">
+        <span class="frame-tag">Autumn · Oct–Nov · russet (same day, rotated)</span>
+        <div class="phone">
+          <div class="screen theme-autumn">
+
+            <header class="app-header">
+              <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg></span>
+              <span class="brand-name">Gratitude</span>
+              <button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+            </header>
+
+            <div class="day-hero">
+              <h2 class="day-date">Tuesday, 14 Oct</h2>
+              <div class="day-meta">
+                <span class="count"><strong>5</strong> things today</span>
+                <span class="season-chip">Autumn</span>
+              </div>
+            </div>
+
+            <div class="day-scroll stagger">
+
+              <section class="cat-group is-nature">
+                <h3 class="cat-head">
+                  <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-9 6-15 14-16 1 9-5 16-14 16z"/><path d="M5 21c4-6 8-9 12-10"/></svg>
+                  Nature <span class="cat-count">2</span>
+                </h3>
+                <div class="entry-list">
+                  <article class="entry"><p class="entry-text">The big beech at the corner has gone full copper overnight. Walked the long way just to stand under it.</p><p class="entry-time">8:40 am</p></article>
+                  <article class="entry"><p class="entry-text">Conkers all over the path — Astrid filled both pockets.</p><p class="entry-time">4:10 pm</p></article>
+                </div>
+              </section>
+
+              <section class="cat-group is-wife">
+                <h3 class="cat-head">
+                  <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg>
+                  My wife <span class="cat-count">1</span>
+                </h3>
+                <div class="entry-list">
+                  <article class="entry"><p class="entry-text">Lit the first fire of the year together. She fell asleep on my shoulder before it caught properly.</p><p class="entry-time">8:15 pm</p></article>
+                </div>
+              </section>
+
+              <section class="cat-group is-family">
+                <h3 class="cat-head">
+                  <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a2.8 2.8 0 0 1 0 5.4"/><path d="M16.5 14.2a4.5 4.5 0 0 1 4 5.3"/></svg>
+                  Family <span class="cat-count">1</span>
+                </h3>
+                <div class="entry-list">
+                  <article class="entry"><p class="entry-text">Soup and bread with the whole family round the table. Nobody in a hurry to leave.</p><p class="entry-time">6:30 pm</p></article>
+                </div>
+              </section>
+
+              <section class="cat-group is-god">
+                <h3 class="cat-head">
+                  <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M7 8.5h10"/></svg>
+                  God <span class="cat-count">1</span>
+                </h3>
+                <div class="entry-list">
+                  <article class="entry"><p class="entry-text">Harvest gratitude — a year of provision, even the hard months. He's been faithful.</p><p class="entry-time">9:20 pm</p></article>
+                </div>
+              </section>
+
+            </div>
+
+            <div class="screen-fade"></div>
+            <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="footnote">
+      <strong>Colour comes from season + category, not from shouting.</strong> The date and the + take the season's accent; each category heading is inked in its own muted hue with a faintly tinted card and a 3px edge. Body text is warm ink, never pure black. Grouped by category, timestamped within. The <strong>+</strong> floats bottom-right for one-handed reach. Notice the category colours stay constant while the whole canvas shifts season to season — that rotation is the app's signature. Next: I can extend this into the full <code>notes/style-guide.html</code> with all six seasons, the add-entry sheet, and the token grid.
+    </p>
+  </div>
+</body>
+</html>

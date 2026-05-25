@@ -43,17 +43,22 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
 - **Brand mark LOCKED: the outline heart already in `index.html` banner** (`<path d="M12
   20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/>`), NOT the
   placeholder PWA icon. Reuse this exact heart.
-- **Open: category sub-heading treatment** ("Nature", "My wife"…). Round 4
-  (`notes/font-specimen-4.html`) compares: (A) Caveat, (B) uppercase tracked Figtree label,
-  (C) sentence-case Figtree title. Each with a muted per-category dot + line-icon.
+- **Category sub-headings LOCKED: Caveat** (option A), inked in each category's own muted
+  colour. Category colours (fixed across seasons): wife `hsl(348 54% 52%)`, family
+  `hsl(32 62% 47%)`, nature `hsl(134 34% 38%)`, me `hsl(202 30% 45%)`, god `hsl(265 32% 52%)`.
+- **Day-view direction LOCKED** (`notes/day-view-mockup.html`, built with frontend-design
+  skill): entries **grouped by category**, chronological within group with a faint
+  timestamp; soft category-tinted entry cards w/ 3px coloured edge; **warm ink, not black**;
+  colour comes from season accent (date + FAB) + per-category heading hues; **floating +
+  FAB** bottom-right (thumb reach); paper-grain + seasonal radial wash; load stagger.
+  Mockup shows Early Summer + Autumn to demonstrate the rotation.
 
-## Next 2-3 steps (Phase 2)
+## Next 2-3 steps (Phase 2 → close)
 
-1. Andy reviews `notes/font-specimen.html`, picks a display voice (+ body pairing).
-2. Claude mocks the real day-view in the chosen font across 2–3 seasonal palettes.
-3. Final artifact: `notes/style-guide.html` — tokens, component specs, light + dark, phone
-   mockups of the gratitude day view, plus the six seasonal themes. Vendor the chosen
-   font(s) into `assets/fonts/`.
+1. Andy reviews `notes/day-view-mockup.html`; refine colour/layout if needed.
+2. Build the definitive `notes/style-guide.html`: token grid + all six seasonal themes +
+   day-view + the add-entry sheet (what the FAB opens) + light/dark.
+3. Vendor Caveat + Figtree `.woff2` into `assets/fonts/`. Then Phase 3 implements for real.
 
 ## Conventions
 
