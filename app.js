@@ -62,7 +62,30 @@ function formatHeading(d) {
   const target = isoDate(d);
   if (target === isoDate(new Date())) return 'Today';
   if (target === isoDate(addDays(new Date(), -1))) return 'Yesterday';
-  return `${DAY_NAMES[d.getDay()]}, ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`;
+  return `${DAY_NAMES[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+}
+function formatTime(ts) {
+  const d = new Date(ts);
+  let hr = d.getHours() % 12; if (hr === 0) hr = 12;
+  return `${hr}.${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+// ------------------------------------------------------------------
+// Seasonal theme — six UK mini-seasons, follows the viewed day's month
+// ------------------------------------------------------------------
+const SEASON_CLASSES = ['theme-spring', 'theme-earlysummer', 'theme-latesummer', 'theme-autumn', 'theme-advent', 'theme-winter'];
+function seasonForDate(d) {
+  const m = d.getMonth();
+  if (m <= 1) return 'theme-winter';      // Jan–Feb
+  if (m <= 3) return 'theme-spring';      // Mar–Apr
+  if (m <= 5) return 'theme-earlysummer'; // May–Jun
+  if (m <= 8) return 'theme-latesummer';  // Jul–Sep
+  if (m <= 10) return 'theme-autumn';     // Oct–Nov
+  return 'theme-advent';                  // Dec
+}
+function applySeason(d) {
+  document.body.classList.remove(...SEASON_CLASSES);
+  document.body.classList.add(seasonForDate(d));
 }
 
 // ------------------------------------------------------------------
@@ -134,6 +157,7 @@ function setDate(d) {
 // Rendering
 // ------------------------------------------------------------------
 async function renderDay() {
+  applySeason(currentDate);
   if (els.date) els.date.textContent = formatHeading(currentDate);
   const entries = await getEntriesForDate(currentDate);
   entries.sort((a, b) => a.timestamp - b.timestamp);
@@ -142,17 +166,23 @@ async function renderDay() {
   if (!entries.length) {
     const li = document.createElement('li');
     li.className = 'entry-empty';
-    li.textContent = 'Nothing logged for this day.';
+    li.textContent = 'Nothing here yet.';
     els.list.appendChild(li);
     return;
   }
-  for (const e of entries) {
+  // Hand-drawn crayon cards; cycle three sketch variants so neighbours differ.
+  // (Phase 4 will group by category and colour each card by its category.)
+  entries.forEach((e, i) => {
     const li = document.createElement('li');
-    li.className = 'entry-row';
+    li.className = `entry s${(i % 3) + 1}`;
 
-    const span = document.createElement('span');
-    span.className = 'entry-text';
-    span.textContent = e.text;
+    const p = document.createElement('p');
+    p.className = 'entry-text';
+    p.textContent = e.text;
+
+    const time = document.createElement('span');
+    time.className = 'entry-time';
+    time.textContent = formatTime(e.timestamp);
 
     const del = document.createElement('button');
     del.className = 'entry-del';
@@ -161,10 +191,9 @@ async function renderDay() {
     del.textContent = '×';
     del.addEventListener('click', () => deleteEntry(e.id));
 
-    li.appendChild(span);
-    li.appendChild(del);
+    li.append(p, time, del);
     els.list.appendChild(li);
-  }
+  });
 }
 window.renderDay = renderDay;
 

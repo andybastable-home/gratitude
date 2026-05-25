@@ -1,5 +1,5 @@
 // Bump CACHE_VERSION whenever shell files change so updates roll cleanly.
-const CACHE_VERSION = 'v0.1.1';
+const CACHE_VERSION = 'v0.2.0';
 const CACHE_NAME = `gratitude-shell-${CACHE_VERSION}`;
 
 const SHELL = [
@@ -11,6 +11,17 @@ const SHELL = [
   './manifest.json',
   './icons/icon.svg',
   './assets/vendor/dexie.min.js',
+  './assets/fonts/fonts.css',
+  './assets/fonts/caveat-latin.woff2',
+  './assets/fonts/caveat-latin-ext.woff2',
+  './assets/fonts/figtree-latin.woff2',
+  './assets/fonts/figtree-latin-ext.woff2',
+  './assets/heroes/springhero.jpg',
+  './assets/heroes/earlysummerhero.jpg',
+  './assets/heroes/latesummerhero.jpg',
+  './assets/heroes/autumnhero.jpg',
+  './assets/heroes/adventhero.jpg',
+  './assets/heroes/winterhero.jpg',
 ];
 
 self.addEventListener('install', (event) => {

@@ -2,32 +2,34 @@
 
 ## Current phase
 
-**Phase 3 — Implement styles** (next)
+**Phase 3 — Implement styles** (built at v0.2.0; awaiting Andy's on-device verification)
 
-Phase 1 (bootstrap + OAuth/Sheets sync) is **done** at v0.1.0. Phase 2 (style guide) is
-**done**: the canonical visual spec is **`notes/style-guide.html`** and the rationale is
-archived in **`notes/phase-2-decisions.md`**. The UI today is still the scrappy dev harness
-(plain text input + list); Phase 3 replaces its look with the style-guide design, Phase 4
-replaces the harness with the real logging UX.
+Phase 1 (sync) done at v0.1.0; Phase 2 (style guide) done. Phase 3 has now applied the
+design system to the **real app** (visual spec: `notes/style-guide.html`; rationale:
+`notes/phase-2-decisions.md`). Light-only.
 
-**Phase 2 delivered (ready for Phase 3 to consume):**
-- `notes/style-guide.html` — tokens (type, 5 fixed category colours, 6 seasonal themes),
-  components (crayon entry card, category chip, FAB, frosted gear, add button), day-view ×6
-  seasons, full-screen compose ×2 states. **Light-only.**
-- Fonts vendored: `assets/fonts/` (Caveat + Figtree, variable woff2, latin+latin-ext) with
-  `assets/fonts/fonts.css` (`@font-face`, weight ranges, `display:swap`).
-- Heroes vendored: `assets/heroes/{spring,earlysummer,latesummer,autumn,advent,winter}hero.jpg`
-  (1000×640, ~70–102 KB each).
+**Phase 3 landed (v0.2.0):**
+- `styles.css` rewritten to the design system: `:root` tokens, six `.theme-*` season classes,
+  warm-paper bg + grain + radial wash, header (accent heart tile + Caveat wordmark + frosted
+  gear), seasonal hero band, big Caveat day-date, hand-drawn crayon entry cards (`#sketch1/2/3`
+  filters), restyled nav / add-form / settings sheet. Dark-mode removed.
+- `index.html`: links `assets/fonts/fonts.css`; inline SVG sketch filter defs; `.hero` element;
+  single light `theme-color`; default `theme-earlysummer` body class.
+- `app.js`: `seasonForDate()` sets the body theme class from the **viewed day's month** (nav
+  between days changes the season); entries render as `.entry` crayon cards (cycle `s1/2/3`)
+  with a faint Caveat timestamp; UK date order ("Sunday, 25 May").
+- `service-worker.js`: `CACHE_VERSION` v0.2.0; precache fonts + 6 heroes. `manifest.json`
+  theme/background colour aligned to cream `#f4ecdd` (was purple — flagged).
 
-## Phase 3 — next 2–3 steps
+**Deferred to Phase 4 (need the category field, which Phase 4 adds):** category *grouping* +
+per-category card colours, and the **FAB → full-screen compose** flow with category chips.
+Phase 3 keeps the inline add-input as the capture method; cards currently take the season
+accent as their ink. PWA install icon (`icons/icon.svg`) still the placeholder — polish later.
 
-1. Wire fonts into the app: `@import` / `<link>` `assets/fonts/fonts.css` from the shell;
-   set the Caveat/Figtree stacks in `styles.css`.
-2. Implement the design tokens + components from `style-guide.html` into `styles.css` /
-   `index.html` (season theming, day-view, compose, hand-drawn card, FAB, gear). Pick the
-   active season by current month.
-3. Add the new assets (fonts + 6 heroes) to the `service-worker.js` precache so the app stays
-   fully offline, and **bump the version in all three places** (see Conventions).
+**Andy to verify on device / `localhost:8000`:** fonts load (Caveat headers, Figtree body);
+season matches the month and changes when navigating days; hero watercolour shows and fades;
+crayon cards render (wobble + hatch) and stay legible; gear/nav legible on frosted discs;
+add + delete + sync still work; v0.2.0 shows in header + footer.
 
 ## Manual setup Andy must do before sync works on-device
 
