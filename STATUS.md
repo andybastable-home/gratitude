@@ -37,11 +37,15 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
   slate-periwinkle `hsl(210 30% 48%)`, kept desaturated so it never reads as "the blue app".
 - **Categories:** wife / family / nature / me / God. Line-icon + muted per-category dot
   (season leads). **God glyph = simple cross.** Brand mark = heart (Andy likes it).
-- **Font — header LOCKED: Caveat** (handwriting) for the wordmark + date headings. Body
-  font still open: round 3 (`notes/font-specimen-3.html`) pairs locked Caveat with six
-  body options — serif (Instrument Serif eased wider, Newsreader, Lora) and sans (Hanken
-  Grotesk, Figtree, Nunito). All OFL / self-hostable. (Rounds 1–2 specimens retained for
-  history.) Andy didn't like Caveat as body text.
+- **Fonts LOCKED: Caveat** (handwriting) for wordmark + date headings; **Figtree** for
+  body. Both OFL / self-hostable. Andy didn't like Caveat as body text. Specimens
+  `notes/font-specimen{,-2,-3,-4}.html` retained for history.
+- **Brand mark LOCKED: the outline heart already in `index.html` banner** (`<path d="M12
+  20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/>`), NOT the
+  placeholder PWA icon. Reuse this exact heart.
+- **Open: category sub-heading treatment** ("Nature", "My wife"…). Round 4
+  (`notes/font-specimen-4.html`) compares: (A) Caveat, (B) uppercase tracked Figtree label,
+  (C) sentence-case Figtree title. Each with a muted per-category dot + line-icon.
 
 ## Next 2-3 steps (Phase 2)
 

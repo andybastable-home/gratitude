@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Gratitude — category heading treatment (round 4)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent:        hsl(345 55% 52%);
+      --accent-strong: hsl(345 60% 42%);
+      --accent-soft:   hsl(345 60% 95%);
+      --bg:        hsl(38 44% 96%);
+      --surface:   hsl(40 50% 99%);
+      --text:      hsl(345 18% 16%);
+      --text-muted:hsl(345 8% 42%);
+      --text-faint:hsl(345 8% 60%);
+      --border:    hsl(345 18% 90%);
+      --border-soft: hsl(40 24% 92%);
+      --shadow:    hsl(345 30% 25% / 0.07);
+      --shadow-lg: hsl(345 30% 25% / 0.13);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+      /* muted per-category dots */
+      --dot-nature: hsl(120 32% 48%);
+      --dot-wife:   hsl(345 50% 58%);
+      --dot-family: hsl(38 60% 52%);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    svg { display: block; }
+    body {
+      font-family: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background:
+        radial-gradient(at 12% 8%, hsl(345 50% 93% / 0.7) 0%, transparent 42%),
+        radial-gradient(at 92% 88%, hsl(38 60% 90% / 0.6) 0%, transparent 50%),
+        var(--bg);
+      color: var(--text); min-height: 100dvh;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility; font-size: 16px; line-height: 1.55;
+    }
+    .page { max-width: 1120px; margin: 0 auto; padding: 56px 24px 80px; }
+    .head { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+    .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-strong); margin: 0 0 10px; }
+    .head h1 { font-family: "Caveat", cursive; font-weight: 700; font-size: clamp(40px, 7vw, 56px); line-height: 1; margin: 0 0 14px; }
+    .head p { color: var(--text-muted); max-width: 66ch; margin: 0; font-size: 15.5px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start; }
+    .tile { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--r-lg); padding: 22px 22px 24px; box-shadow: 0 1px 3px var(--shadow), 0 18px 40px -28px var(--shadow-lg); }
+    .tile-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .tile-kind { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-strong); }
+    .tile-fontname { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+
+    /* banner brand — the real heart from index.html */
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .brand-mark { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; background: var(--accent); color: var(--surface); display: grid; place-items: center; box-shadow: 0 4px 12px -4px var(--accent); }
+    .brand-mark svg { width: 21px; height: 21px; }
+    .wordmark { font-family: "Caveat", cursive; font-weight: 700; font-size: 30px; line-height: 1; color: var(--text); }
+
+    .date-line { font-family: "Caveat", cursive; font-weight: 700; font-size: 34px; line-height: 1.04; color: var(--text); margin: 0 0 20px; }
+
+    .cat-group { margin-top: 20px; }
+    .cat-group:first-of-type { margin-top: 0; }
+    .cat-head { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; color: var(--text); }
+    .cat-head .cat-icon { width: 17px; height: 17px; color: var(--text-muted); flex-shrink: 0; }
+    .cat-head .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .entry-text { font-family: "Figtree", sans-serif; font-weight: 400; font-size: 16px; line-height: 1.5; color: var(--text); margin: 0 0 9px; padding-left: 26px; }
+    .entry-text:last-child { margin-bottom: 0; }
+
+    /* ---- treatment A: Caveat headings ---- */
+    .t-caveat .cat-head { font-family: "Caveat", cursive; font-weight: 700; font-size: 26px; letter-spacing: 0; }
+    /* ---- treatment B: Figtree bold UPPERCASE label ---- */
+    .t-upper .cat-head { font-family: "Figtree", sans-serif; font-weight: 700; font-size: 12.5px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-muted); }
+    /* ---- treatment C: Figtree bold sentence-case title ---- */
+    .t-title .cat-head { font-family: "Figtree", sans-serif; font-weight: 600; font-size: 18px; letter-spacing: -0.01em; }
+
+    .pairing { font-size: 12.5px; color: var(--text-faint); margin: 20px 0 0; line-height: 1.5; border-top: 1px dashed var(--border); padding-top: 14px; }
+    .pairing strong { color: var(--text-muted); font-weight: 600; }
+    .footnote { margin-top: 44px; font-size: 13px; color: var(--text-faint); line-height: 1.6; max-width: 72ch; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="head">
+      <p class="eyebrow">Phase 2 · voice · round 4 · header Caveat + body Figtree locked</p>
+      <h1>How should categories read?</h1>
+      <p>Both locked: Caveat headers, Figtree body, and the real heart mark from the app banner. The only question left is the <em>category sub-heading</em> ("Nature", "My wife"…). Same day-view three ways — handwritten Caveat, a clean uppercase Figtree label, or a sentence-case Figtree title — each with its muted category dot and line-icon.</p>
+    </header>
+
+    <div class="grid">
+
+      <!-- A · Caveat headings -->
+      <article class="tile t-caveat">
+        <div class="tile-meta"><span class="tile-kind">A · Handwritten</span><span class="tile-fontname">Caveat headings</span></div>
+        <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg></span><span class="wordmark">Gratitude</span></div>
+        <p class="date-line">Sunday, 25 May</p>
+
+        <section class="cat-group">
+          <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-9 6-15 14-16 1 9-5 16-14 16z"/><path d="M5 21c4-6 8-9 12-10"/></svg><span class="dot" style="background:var(--dot-nature)"></span>Nature</h3>
+          <p class="entry-text">The hawthorn blossom along the lane this morning, thick and white, the whole hedgerow humming with bees.</p>
+          <p class="entry-text">First swifts back over the garden at dusk.</p>
+        </section>
+
+        <section class="cat-group">
+          <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg><span class="dot" style="background:var(--dot-wife)"></span>My wife</h3>
+          <p class="entry-text">She made coffee and brought it out to the step so we could watch the bees too.</p>
+        </section>
+
+        <p class="pairing"><strong>Playful &amp; cohesive.</strong> Most "journal", but a lot of handwriting on screen, and small Caveat labels are slightly less scannable.</p>
+      </article>
+
+      <!-- B · Figtree uppercase label -->
+      <article class="tile t-upper">
+        <div class="tile-meta"><span class="tile-kind">B · Uppercase label</span><span class="tile-fontname">Figtree 700 · tracked</span></div>
+        <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg></span><span class="wordmark">Gratitude</span></div>
+        <p class="date-line">Sunday, 25 May</p>
+
+        <section class="cat-group">
+          <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-9 6-15 14-16 1 9-5 16-14 16z"/><path d="M5 21c4-6 8-9 12-10"/></svg><span class="dot" style="background:var(--dot-nature)"></span>Nature</h3>
+          <p class="entry-text">The hawthorn blossom along the lane this morning, thick and white, the whole hedgerow humming with bees.</p>
+          <p class="entry-text">First swifts back over the garden at dusk.</p>
+        </section>
+
+        <section class="cat-group">
+          <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg><span class="dot" style="background:var(--dot-wife)"></span>My wife</h3>
+          <p class="entry-text">She made coffee and brought it out to the step so we could watch the bees too.</p>
+        </section>
+
+        <p class="pairing"><strong>Cleanest &amp; most scannable.</strong> Reads clearly as a section label; keeps the handwriting special to the header alone.</p>
+      </article>
+
+      <!-- C · Figtree sentence-case title -->
+      <article class="tile t-title">
+        <div class="tile-meta"><span class="tile-kind">C · Sentence title</span><span class="tile-fontname">Figtree 600</span></div>
+        <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg></span><span class="wordmark">Gratitude</span></div>
+        <p class="date-line">Sunday, 25 May</p>
+
+        <section class="cat-group">
+          <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-9 6-15 14-16 1 9-5 16-14 16z"/><path d="M5 21c4-6 8-9 12-10"/></svg><span class="dot" style="background:var(--dot-nature)"></span>Nature</h3>
+          <p class="entry-text">The hawthorn blossom along the lane this morning, thick and white, the whole hedgerow humming with bees.</p>
+          <p class="entry-text">First swifts back over the garden at dusk.</p>
+        </section>
+
+        <section class="cat-group">
+          <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg><span class="dot" style="background:var(--dot-wife)"></span>My wife</h3>
+          <p class="entry-text">She made coffee and brought it out to the step so we could watch the bees too.</p>
+        </section>
+
+        <p class="pairing"><strong>Middle ground.</strong> Bolder and warmer than the label, calmer than the handwriting. Reads like a title, not a tag.</p>
+      </article>
+
+    </div>
+
+    <p class="footnote">
+      My lean: <strong>B (uppercase Figtree label)</strong> keeps the handwriting precious to the header and the day's date, with categories quietly organising underneath — best for scanning a long day. <strong>A (Caveat)</strong> is the most charming if you want the whole page to feel hand-kept, accepting a little less legibility. <strong>C</strong> splits the difference. Pick one (mix-and-match welcome) and I'll build the full day-view across the seasonal palettes.
+    </p>
+  </div>
+</body>
+</html>
