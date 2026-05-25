@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Gratitude — day view (crayon cards, Gemini-inspired)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --c-wife:   hsl(348 54% 52%);
+      --c-family: hsl(36 70% 50%);
+      --c-nature: hsl(140 38% 44%);
+      --c-me:     hsl(202 34% 48%);
+      --c-god:    hsl(265 34% 56%);
+      --graphite: hsl(28 18% 22%);
+      --r-pill: 999px;
+      --font-hand: "Caveat", cursive;
+      --font-body: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .theme-earlysummer {
+      --accent: hsl(345 60% 53%); --accent-deep: hsl(345 60% 43%);
+      --ink: hsl(28 20% 20%); --ink-soft: hsl(28 12% 42%); --ink-faint: hsl(28 10% 58%);
+      --paper: hsl(38 48% 96%); --card: hsl(40 54% 99%);
+      --wash-a: hsl(345 60% 91% / 0.5); --wash-b: hsl(45 70% 89% / 0.45);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    button { font-family: inherit; }
+    svg { display: block; }
+    body {
+      font-family: var(--font-body); background: hsl(35 24% 89%); color: hsl(30 12% 25%);
+      min-height: 100dvh; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility; font-size: 16px; line-height: 1.55;
+    }
+    .page { max-width: 760px; margin: 0 auto; padding: 52px 24px 72px; text-align: center; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: hsl(345 40% 48%); margin: 0 0 8px; }
+    .page h1 { font-family: var(--font-hand); font-weight: 700; font-size: clamp(40px, 7vw, 56px); line-height: 1; margin: 0 0 12px; color: hsl(30 20% 22%); }
+    .page > p { color: hsl(30 10% 40%); max-width: 60ch; margin: 0 auto 34px; font-size: 15px; }
+
+    .phone {
+      position: relative; width: 100%; max-width: 392px; margin: 0 auto; border-radius: 36px; padding: 7px;
+      background: hsl(30 12% 80%);
+      box-shadow: 0 30px 60px -28px hsl(30 30% 20% / 0.5), 0 8px 20px -10px hsl(30 30% 20% / 0.25);
+    }
+    .screen {
+      position: relative; border-radius: 30px; overflow: hidden; min-height: 760px; text-align: left;
+      display: flex; flex-direction: column;
+      background:
+        radial-gradient(130% 70% at 100% 0%, var(--wash-a) 0%, transparent 50%),
+        radial-gradient(120% 80% at 0% 100%, var(--wash-b) 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+    }
+    .screen::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0.05; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .screen > * { position: relative; z-index: 2; }
+
+    /* hero motif — tight top-right bouquet */
+    .hero {
+      position: absolute; top: 0; right: 0; width: 62%; height: 230px; z-index: 1; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95) 40%, transparent 100%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95) 40%, transparent 100%);
+    }
+    .hero svg { width: 100%; height: 100%; }
+
+    .app-header { display: flex; align-items: center; gap: 10px; padding: 18px 20px 12px; }
+    .brand-mark { width: 34px; height: 34px; flex-shrink: 0; color: var(--ink); display: grid; place-items: center; }
+    .brand-mark svg { width: 26px; height: 26px; }
+    .brand-name { font-family: var(--font-hand); font-weight: 700; font-size: 31px; line-height: 1; color: var(--ink); flex: 1; }
+    .settings-btn { width: 40px; height: 40px; border: none; background: transparent; color: var(--ink-soft); display: grid; place-items: center; cursor: pointer; }
+
+    .day-hero { padding: 2px 22px 20px; }
+    .day-date { font-family: var(--font-hand); font-weight: 700; font-size: 48px; line-height: 0.96; color: var(--ink); margin: 0; }
+    .day-meta { margin-top: 6px; }
+    .day-meta .count { font-size: 14px; color: var(--ink-soft); }
+    .day-meta .count strong { color: var(--ink); font-weight: 700; }
+
+    .day-scroll { flex: 1; overflow: hidden; padding: 4px 18px 120px; display: flex; flex-direction: column; gap: 22px; }
+
+    .cat-group { --c: var(--ink); }
+    .cat-group.is-wife { --c: var(--c-wife); } .cat-group.is-family { --c: var(--c-family); }
+    .cat-group.is-nature { --c: var(--c-nature); } .cat-group.is-me { --c: var(--c-me); }
+    .cat-group.is-god { --c: var(--c-god); }
+
+    .cat-head { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; padding-left: 2px; font-family: var(--font-hand); font-weight: 700; font-size: 29px; line-height: 1; color: var(--c); }
+    .cat-head .cat-icon { width: 21px; height: 21px; flex-shrink: 0; color: var(--c); }
+    .cat-head .cat-count { font-family: var(--font-hand); font-size: 22px; font-weight: 600; color: var(--ink-faint); margin-left: auto; }
+
+    .entry-list { display: flex; flex-direction: column; gap: 13px; }
+
+    /* ---- crayon hand-drawn card ---- */
+    .entry { position: relative; }
+    .entry .sketch { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; overflow: visible; }
+    .entry .sketch .fill { color: var(--c); }
+    .entry-body { position: relative; z-index: 1; padding: 15px 18px 12px; }
+    .entry-text { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink); letter-spacing: -0.003em; }
+    .entry-time { display: block; text-align: right; margin: 3px 2px 0; font-family: var(--font-hand); font-weight: 600; font-size: 18px; color: var(--ink-soft); opacity: 0.75; line-height: 1; }
+    .entry.r1 { transform: rotate(-0.35deg); } .entry.r2 { transform: rotate(0.4deg); } .entry.r3 { transform: rotate(-0.15deg); }
+
+    .fab {
+      position: absolute; right: 18px; bottom: 22px; z-index: 6; width: 60px; height: 60px; border-radius: 50%; border: none;
+      background: var(--accent); color: hsl(40 60% 98%); display: grid; place-items: center; cursor: pointer;
+      box-shadow: 0 12px 26px -8px var(--accent), 0 4px 10px -4px hsl(0 0% 0% / 0.25); transition: transform 120ms ease;
+    }
+    .fab svg { width: 28px; height: 28px; }
+    .fab:active { transform: scale(0.94); }
+    .screen-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 92px; z-index: 4; pointer-events: none; background: linear-gradient(to top, var(--paper) 14%, transparent); }
+
+    .stagger > * { opacity: 0; transform: translateY(10px); animation: rise 620ms cubic-bezier(0.2,0.7,0.2,1) forwards; }
+    .stagger > *:nth-child(1) { animation-delay: 70ms; } .stagger > *:nth-child(2) { animation-delay: 150ms; }
+    .stagger > *:nth-child(3) { animation-delay: 230ms; } .stagger > *:nth-child(4) { animation-delay: 310ms; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .stagger > * { opacity: 1; transform: none; animation: none; } }
+
+    .footnote { margin: 34px auto 0; font-size: 13px; color: hsl(30 10% 44%); line-height: 1.6; max-width: 70ch; text-align: left; }
+    .footnote strong { color: hsl(30 16% 30%); }
+  </style>
+</head>
+<body>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <!-- crayon hatching, inherits category colour via currentColor -->
+      <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="6" height="6" fill="currentColor" opacity="0.14"/>
+        <line x1="0" y1="0" x2="0" y2="6" stroke="currentColor" stroke-width="2.4" opacity="0.5"/>
+        <line x1="3" y1="0" x2="3" y2="6" stroke="currentColor" stroke-width="0.8" opacity="0.28"/>
+      </pattern>
+      <!-- whole-shape wobble (fill + outline distort together) -->
+      <filter id="rough1" x="-8%" y="-8%" width="116%" height="116%"><feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="6.5" xChannelSelector="R" yChannelSelector="G"/></filter>
+      <filter id="rough2" x="-8%" y="-8%" width="116%" height="116%"><feTurbulence type="fractalNoise" baseFrequency="0.017" numOctaves="2" seed="18" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5.2" xChannelSelector="R" yChannelSelector="G"/></filter>
+      <filter id="rough3" x="-8%" y="-8%" width="116%" height="116%"><feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" seed="31" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter>
+
+      <symbol id="bloom" viewBox="-14 -14 28 28">
+        <g fill="currentColor">
+          <ellipse cx="0" cy="-8" rx="4.3" ry="6.6"/>
+          <ellipse cx="0" cy="-8" rx="4.3" ry="6.6" transform="rotate(72)"/>
+          <ellipse cx="0" cy="-8" rx="4.3" ry="6.6" transform="rotate(144)"/>
+          <ellipse cx="0" cy="-8" rx="4.3" ry="6.6" transform="rotate(216)"/>
+          <ellipse cx="0" cy="-8" rx="4.3" ry="6.6" transform="rotate(288)"/>
+        </g>
+        <circle cx="0" cy="0" r="3.5" fill="hsl(45 78% 60%)"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="page">
+    <p class="eyebrow">Phase 2 · day view · crayon cards</p>
+    <h1>Kept by hand</h1>
+    <p>Rebuilt after your Gemini reference: boxes filled with diagonal crayon hatching in the category colour, wrapped in a sketched graphite outline that wobbles as one drawn shape. Hero blossoms pulled into a tight top-right bunch; the season label is gone — the visuals say it. Caveat timestamps locked.</p>
+
+    <div class="phone">
+      <div class="screen theme-earlysummer">
+
+        <div class="hero" style="color: hsl(345 58% 66%)">
+          <svg viewBox="0 0 240 230" preserveAspectRatio="xMaxYMin slice" fill="none">
+            <g stroke="hsl(134 32% 54% / 0.45)" stroke-width="2.2" stroke-linecap="round">
+              <path d="M196 168 Q204 96 188 40"/>
+              <path d="M156 150 Q150 104 200 78"/>
+              <path d="M218 150 Q224 110 210 70"/>
+            </g>
+            <use href="#bloom" x="178" y="6"  width="60" height="60" style="color:hsl(345 60% 70%)" opacity="0.9"/>
+            <use href="#bloom" x="146" y="40" width="42" height="42" style="color:hsl(350 64% 76%)" opacity="0.82"/>
+            <use href="#bloom" x="208" y="44" width="40" height="40" style="color:hsl(2 60% 76%)"   opacity="0.85"/>
+            <use href="#bloom" x="184" y="74" width="30" height="30" style="color:hsl(345 55% 80%)" opacity="0.72"/>
+            <use href="#bloom" x="150" y="86" width="24" height="24" style="color:hsl(350 60% 74%)" opacity="0.6"/>
+          </svg>
+        </div>
+
+        <header class="app-header">
+          <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg></span>
+          <span class="brand-name">Gratitude</span>
+          <button class="settings-btn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+        </header>
+
+        <div class="day-hero">
+          <h2 class="day-date">Sunday, 25 May</h2>
+          <div class="day-meta"><span class="count"><strong>5</strong> things today</span></div>
+        </div>
+
+        <div class="day-scroll stagger">
+
+          <section class="cat-group is-nature">
+            <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-9 6-15 14-16 1 9-5 16-14 16z"/><path d="M5 21c4-6 8-9 12-10"/></svg>Nature<span class="cat-count">2</span></h3>
+            <div class="entry-list">
+              <article class="entry r1">
+                <svg class="sketch" viewBox="0 0 320 130" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#rough1)"><rect class="fill" x="6" y="6" width="308" height="118" rx="8" fill="url(#hatch)"/><rect x="6" y="6" width="308" height="118" rx="8" fill="none" stroke="var(--graphite)" stroke-width="2.4"/><rect x="8" y="9" width="305" height="113" rx="10" fill="none" stroke="var(--graphite)" stroke-width="1.2" stroke-opacity="0.4"/></g></svg>
+                <div class="entry-body"><p class="entry-text">The hawthorn blossom along the lane this morning — thick and white, the whole hedgerow humming with bees.</p><span class="entry-time">8:14</span></div>
+              </article>
+              <article class="entry r2">
+                <svg class="sketch" viewBox="0 0 320 110" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#rough2)"><rect class="fill" x="6" y="6" width="308" height="98" rx="8" fill="url(#hatch)"/><rect x="6" y="6" width="308" height="98" rx="8" fill="none" stroke="var(--graphite)" stroke-width="2.4"/><rect x="8" y="9" width="305" height="93" rx="10" fill="none" stroke="var(--graphite)" stroke-width="1.2" stroke-opacity="0.4"/></g></svg>
+                <div class="entry-body"><p class="entry-text">First swifts back over the garden, screaming round the chimney at dusk.</p><span class="entry-time">9:02</span></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="cat-group is-wife">
+            <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></svg>My wife<span class="cat-count">1</span></h3>
+            <div class="entry-list">
+              <article class="entry r3">
+                <svg class="sketch" viewBox="0 0 320 120" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#rough3)"><rect class="fill" x="6" y="6" width="308" height="108" rx="8" fill="url(#hatch)"/><rect x="6" y="6" width="308" height="108" rx="8" fill="none" stroke="var(--graphite)" stroke-width="2.4"/><rect x="8" y="9" width="305" height="103" rx="10" fill="none" stroke="var(--graphite)" stroke-width="1.2" stroke-opacity="0.4"/></g></svg>
+                <div class="entry-body"><p class="entry-text">She made coffee and brought it out to the step so we could watch the bees together.</p><span class="entry-time">8:30</span></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="cat-group is-family">
+            <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a2.8 2.8 0 0 1 0 5.4"/><path d="M16.5 14.2a4.5 4.5 0 0 1 4 5.3"/></svg>Family<span class="cat-count">1</span></h3>
+            <div class="entry-list">
+              <article class="entry r1">
+                <svg class="sketch" viewBox="0 0 320 110" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#rough2)"><rect class="fill" x="6" y="6" width="308" height="98" rx="8" fill="url(#hatch)"/><rect x="6" y="6" width="308" height="98" rx="8" fill="none" stroke="var(--graphite)" stroke-width="2.4"/><rect x="8" y="9" width="305" height="93" rx="10" fill="none" stroke="var(--graphite)" stroke-width="1.2" stroke-opacity="0.4"/></g></svg>
+                <div class="entry-body"><p class="entry-text">Long phone call with Mum — she sounded brighter than she has in weeks.</p><span class="entry-time">2:47</span></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="cat-group is-god">
+            <h3 class="cat-head"><svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M7 8.5h10"/></svg>God<span class="cat-count">1</span></h3>
+            <div class="entry-list">
+              <article class="entry r2">
+                <svg class="sketch" viewBox="0 0 320 120" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#rough3)"><rect class="fill" x="6" y="6" width="308" height="108" rx="8" fill="url(#hatch)"/><rect x="6" y="6" width="308" height="108" rx="8" fill="none" stroke="var(--graphite)" stroke-width="2.4"/><rect x="8" y="9" width="305" height="103" rx="10" fill="none" stroke="var(--graphite)" stroke-width="1.2" stroke-opacity="0.4"/></g></svg>
+                <div class="entry-body"><p class="entry-text">Quiet ten minutes on the step before anyone was up. Grateful just to be held.</p><span class="entry-time">7:50</span></div>
+              </article>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="screen-fade"></div>
+        <button class="fab" aria-label="Add a gratitude"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+
+      </div>
+    </div>
+
+    <p class="footnote">
+      <strong>Crayon fill</strong> is an SVG diagonal hatch pattern that inherits each category's colour; the <strong>graphite outline</strong> is drawn twice (a firm line + a faint second pass) and the whole shape runs through one turbulence/displacement filter so fill and line wobble together as a single drawn object. Three filter seeds + tiny rotations are cycled so neighbours differ. One filter per card keeps it affordable on the Pixel 8a. <strong>Headings:</strong> I kept them in the category colour (you loved that earlier) — the Gemini ref uses graphite/black; say which you prefer. Next: tune hatch density / wobble, then roll this card + a per-season hero into the full <code>style-guide.html</code> (Spring shoots, Late Summer sunflowers, Advent candle, Winter snow) and design the add-entry sheet.
+    </p>
+  </div>
+</body>
+</html>

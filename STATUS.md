@@ -46,28 +46,44 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
 - **Category sub-headings LOCKED: Caveat** (option A), inked in each category's own muted
   colour. Category colours (fixed across seasons): wife `hsl(348 54% 52%)`, family
   `hsl(32 62% 47%)`, nature `hsl(134 34% 38%)`, me `hsl(202 30% 45%)`, god `hsl(265 32% 52%)`.
-- **Day-view direction LOCKED** (latest: `notes/day-view-mockup-2.html`; v1
-  `day-view-mockup.html` kept for history): entries **grouped by category**, chronological
-  within group; **warm ink, not black**; colour from season accent (date + FAB) +
-  per-category heading hues + soft category-tinted card fill. **Floating + FAB** bottom-right
-  (thumb reach); paper-grain + seasonal radial wash; load stagger. Andy loves the palette.
-- **Hand-drawn entry borders** (v2): SVG `feTurbulence`+`feDisplacementMap` filter wobbles
-  each card's outline (3 seeds `#sketch1/2/3` + tiny rotations, cycled via `.s1/.s2/.s3` so
-  neighbours differ); filter on the border-only `::before` so text stays crisp. **Left
-  accent bar removed.** Header + soft palette carry the colour.
-- **Seasonal hero motif** (v2): vendored SVG band at top, fades into paper. Early Summer =
-  blossom, Autumn = leaves. Motifs matched to real month (May = blossom, NOT sunflowers —
-  those slot into Late Summer). Still need: Spring shoots, Late Summer sunflowers, Advent
-  candle/star, Winter snowflakes.
-- **Timestamp** = faint right-aligned **Caveat** scribble (almost hidden). Andy unsure it's
-  needed — keep optional.
+- **Day-view direction LOCKED** (latest: `notes/day-view-mockup-4.html`; earlier versions
+  kept for history): entries **grouped by category**, chronological within group; **warm ink,
+  not black**; colour from season accent (date + FAB) + per-category Caveat heading hues
+  (coloured, NOT graphite). **Floating + FAB** bottom-right (thumb reach); paper-grain +
+  seasonal radial wash; load stagger. Andy loves the palette. **Category counts removed**
+  (was a faint per-group count). **Settings gear** now sits on a frosted paper disc
+  (`color-mix` paper bg + blur + shadow) so it lifts off the busy hero watercolour.
+- **Hand-drawn entry cards LOCKED** (v4, Andy "really happy"): crayon **hatch fill** in the
+  category colour (layered `repeating-linear-gradient`) + wobbly double outline via
+  `feTurbulence`+`feDisplacementMap` (`#sketch1/2/3`, 3 seeds + tiny rotations `.s1/.s2/.s3`
+  so neighbours differ). Card text gets a **paper-coloured text-shadow halo** so it stays
+  legible over the hatch/noise. Left accent bar gone.
+- **Hero = painterly watercolour JPG** (LOCKED direction, replaces the old SVG motifs):
+  bespoke per-season image, motif clustered **top-right**, left ~45% empty for the date.
+  `mix-blend-mode: multiply` drops the cream paper bg into the app paper; `background-position:
+  top right`; masked fade to transparent at the bottom. **Have:** `earlysummerhero.jpg`
+  (hawthorn blossom), `autumnhero.jpg` (oak/beech + acorns). **Need 4 from Gemini** (Andy makes
+  them): Spring (daffodils/snowdrops/shoots), Late Summer (sunflowers), Advent (holly/ivy/berries
+  + candle-gold), Winter (frosted twigs/hellebore/snowdrops). Brief given. **Export budget:**
+  ~1000×620, JPG ~80–120 KB, same warm cream bg on all. `autumnhero.jpg` is currently
+  1407×1125 / 558 KB — needs downscaling before it's vendored + SW-precached.
+- **Dark mode: NONE.** Light-only — embrace the warm-paper journal identity (also lets the
+  multiply-blend heroes just work). Decided 2026-05-25.
+- **Add-entry = full-screen compose** (LOCKED direction, `notes/add-entry-mockup.html`): the +
+  FAB opens a calm full-screen page (hero overhead, Caveat prompt "What are you grateful for?",
+  borderless journal text field, category **chips** — selected chip fills with its colour's
+  hand-drawn hatch), primary **"Add to today"** button pinned bottom (thumb reach, disabled
+  until there's content). Chosen over a quick bottom sheet for the reflective journal feel.
+- **Timestamp** = faint right-aligned **Caveat** scribble (almost hidden). LOCKED.
 
 ## Next 2-3 steps (Phase 2 → close)
 
-1. Andy reviews `notes/day-view-mockup.html`; refine colour/layout if needed.
+1. Andy reviews `notes/add-entry-mockup.html` (full-screen compose) + the gear fix in
+   `day-view-mockup-4.html`. Gemini generates the 4 remaining hero JPGs from the brief.
 2. Build the definitive `notes/style-guide.html`: token grid + all six seasonal themes +
-   day-view + the add-entry sheet (what the FAB opens) + light/dark.
-3. Vendor Caveat + Figtree `.woff2` into `assets/fonts/`. Then Phase 3 implements for real.
+   day-view + the compose screen. (No light/dark — light only.)
+3. Vendor Caveat + Figtree `.woff2` into `assets/fonts/`; downscale `autumnhero.jpg` and drop
+   all six heroes into `assets/`. Then Phase 3 implements for real.
 
 ## Conventions
 
