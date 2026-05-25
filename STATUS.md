@@ -58,15 +58,14 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
   `feTurbulence`+`feDisplacementMap` (`#sketch1/2/3`, 3 seeds + tiny rotations `.s1/.s2/.s3`
   so neighbours differ). Card text gets a **paper-coloured text-shadow halo** so it stays
   legible over the hatch/noise. Left accent bar gone.
-- **Hero = painterly watercolour JPG** (LOCKED direction, replaces the old SVG motifs):
-  bespoke per-season image, motif clustered **top-right**, left ~45% empty for the date.
-  `mix-blend-mode: multiply` drops the cream paper bg into the app paper; `background-position:
-  top right`; masked fade to transparent at the bottom. **Have:** `earlysummerhero.jpg`
-  (hawthorn blossom), `autumnhero.jpg` (oak/beech + acorns). **Need 4 from Gemini** (Andy makes
-  them): Spring (daffodils/snowdrops/shoots), Late Summer (sunflowers), Advent (holly/ivy/berries
-  + candle-gold), Winter (frosted twigs/hellebore/snowdrops). Brief given. **Export budget:**
-  ~1000×620, JPG ~80–120 KB, same warm cream bg on all. `autumnhero.jpg` is currently
-  1407×1125 / 558 KB — needs downscaling before it's vendored + SW-precached.
+- **Hero = painterly watercolour JPG** (LOCKED, replaces the old SVG motifs): bespoke per-season
+  image, motif clustered **top-right**, left ~45% empty for the date. `mix-blend-mode: multiply`
+  drops the cream paper bg into the app paper; `background-position: top right`; masked fade to
+  transparent at the bottom. **All six done** in `notes/` (`spring/earlysummer/latesummer/
+  autumn/advent/winterhero.jpg`) — Gemini masters, converted with ffmpeg to a uniform **1000×640,
+  JPG q3, 70–102 KB** (crop keeps the right/motif, trims empty-left). Gemini PNG masters
+  (`notes/*_Gemini.png`, ~7 MB each) are **git-ignored** — not committed. Minor: Early Summer's
+  paper is a touch cooler than the rest, but multiply-blend normalises it.
 - **Dark mode: NONE.** Light-only — embrace the warm-paper journal identity (also lets the
   multiply-blend heroes just work). Decided 2026-05-25.
 - **Add-entry = full-screen compose** (LOCKED + approved, `notes/add-entry-mockup.html`): the +
@@ -80,12 +79,11 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
 
 ## Next 2-3 steps (Phase 2 → close)
 
-1. Compose screen + gear fix **approved**. Remaining: Gemini generates the 4 remaining hero
-   JPGs from the brief (Spring, Late Summer sunflowers, Advent, Winter).
+1. Compose screen + gear fix **approved**; all six hero JPGs **done** (in `notes/`).
 2. Build the definitive `notes/style-guide.html`: token grid + all six seasonal themes +
    day-view + the compose screen. (No light/dark — light only.)
-3. Vendor Caveat + Figtree `.woff2` into `assets/fonts/`; downscale `autumnhero.jpg` and drop
-   all six heroes into `assets/`. Then Phase 3 implements for real.
+3. Vendor Caveat + Figtree `.woff2` into `assets/fonts/`; move the six heroes into `assets/`.
+   Then Phase 3 implements for real.
 
 ## Conventions
 

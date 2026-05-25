@@ -28,3 +28,6 @@ npm-debug.log*
 
 # AI context exports
 *.aicontext
+
+# Gemini image masters (huge PNGs — only the optimised *hero.jpg are committed)
+notes/*_Gemini.png
