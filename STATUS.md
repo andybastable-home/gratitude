@@ -24,13 +24,30 @@ These are one-time Google Cloud Console / GitHub steps for OAuth client
 
 Until 1–2 are done, the Connect button will fail with an OAuth origin/consent error.
 
+## Phase 2 design decisions (locked so far)
+
+- **Distinctiveness = seasonality.** Plants is static green, food-and-weight static blue;
+  Gratitude is the one that changes with the year. That rotation is its signature.
+- **Season-tinted canvas** — the whole background (not just the accent) shifts hue per
+  mini-season. **Full-personality** shifts: accent + wash + a small per-season motif/texture.
+- **Six mini-seasons & accents** (UK northern-hemisphere): Spring (Mar–Apr) narcissus
+  green-gold `hsl(82 45% 40%)`; Early Summer (May–Jun) blossom rose `hsl(345 55% 52%)`;
+  Late Summer (Jul–Sep) sun-gold `hsl(38 70% 46%)`; Autumn (Oct–Nov) russet `hsl(20 65% 45%)`;
+  Advent (Dec) liturgical violet `hsl(270 35% 45%)` + candle-gold; Winter (Jan–Feb) frost
+  slate-periwinkle `hsl(210 30% 48%)`, kept desaturated so it never reads as "the blue app".
+- **Categories:** wife / family / nature / me / God. Line-icon + muted per-category dot
+  (season leads). **God glyph = simple cross.** Brand mark = heart (Andy likes it).
+- **Font: open question.** Fraunces felt too samey vs the sisters. Candidates in
+  `notes/font-specimen.html` (all OFL / self-hostable): Newsreader, Spectral, Instrument
+  Serif, Young Serif, Bricolage Grotesque; body shown in Hanken Grotesk.
+
 ## Next 2-3 steps (Phase 2)
 
-1. Claude produces multiple distinct design directions as a single self-contained HTML
-   preview (app mockups + token grid), in the spirit of `plants/notes/style-guide.html`.
-2. Andy picks/refines over a few rounds.
+1. Andy reviews `notes/font-specimen.html`, picks a display voice (+ body pairing).
+2. Claude mocks the real day-view in the chosen font across 2–3 seasonal palettes.
 3. Final artifact: `notes/style-guide.html` — tokens, component specs, light + dark, phone
-   mockups of the gratitude day view. (Also pick a self-hostable display font for offline.)
+   mockups of the gratitude day view, plus the six seasonal themes. Vendor the chosen
+   font(s) into `assets/fonts/`.
 
 ## Conventions
 
