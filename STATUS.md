@@ -37,9 +37,11 @@ Until 1–2 are done, the Connect button will fail with an OAuth origin/consent 
   slate-periwinkle `hsl(210 30% 48%)`, kept desaturated so it never reads as "the blue app".
 - **Categories:** wife / family / nature / me / God. Line-icon + muted per-category dot
   (season leads). **God glyph = simple cross.** Brand mark = heart (Andy likes it).
-- **Font: open question.** Fraunces felt too samey vs the sisters. Candidates in
-  `notes/font-specimen.html` (all OFL / self-hostable): Newsreader, Spectral, Instrument
-  Serif, Young Serif, Bricolage Grotesque; body shown in Hanken Grotesk.
+- **Font: open question.** Fraunces felt too samey vs the sisters. Round 1
+  (`notes/font-specimen.html`) → Andy liked **Instrument Serif** but wanted the heading
+  bolder/wider (it's single-weight, no width axis). Round 2 (`notes/font-specimen-2.html`):
+  bolder Instrument relatives (DM Serif Display, Playfair, Bodoni Moda) + hand-drawn faces
+  (Caveat, Shantell Sans, Patrick Hand) for the journal feel. All OFL / self-hostable.
 
 ## Next 2-3 steps (Phase 2)
 
