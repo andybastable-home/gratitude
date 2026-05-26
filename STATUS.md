@@ -2,13 +2,17 @@
 
 ## Current phase
 
-**Phase 4 — Logging & categorising** done at **v0.3.1** (awaiting Andy's on-device verification)
+**Phase 4 — Logging & categorising** done at **v0.3.2** (awaiting Andy's on-device verification)
 
-**v0.3.1 layout fixes (post-review):** hero moved to body-top (behind the transparent header,
-spans the column edge-to-edge — fixes the "header band" gap + the desktop side-leak); FAB +
-screen-fade moved to body level with z-index above the footer so the FAB is tappable on phone
-(plus `env(safe-area-inset-bottom)` so it clears the gesture bar); removed the header version
-span (version now footer + SW only).
+**v0.3.1 layout fixes:** hero moved to body-top (behind the transparent header, spans the
+column edge-to-edge — fixes the "header band" gap + the desktop side-leak); FAB + screen-fade
+moved to body level with z-index above content so the FAB is tappable on phone (plus
+`env(safe-area-inset-bottom)` so it clears the gesture bar).
+
+**v0.3.2 nav/chrome tweaks:** removed the prev/next arrows and "jump to today" — day nav is now
+**swipe** (left = next, right = prev; touch) + arrow keys (desktop); month abbreviated + date
+font 38px + nowrap so it never wraps; removed the footer and moved the version into the
+**settings overlay** (`.settings-version`). Version lives in settings line + SW only.
 
 Phases 1–3 done (sync v0.1.0, style guide, design system applied v0.2.0). Phase 4 adds the
 real logging UX + categories, to the locked spec in `notes/style-guide.html`.
@@ -34,8 +38,9 @@ real logging UX + categories, to the locked spec in `notes/style-guide.html`.
 **Andy to verify on device / `localhost:8000`:** FAB opens compose; ×/Escape closes; Add
 disabled until text **and** a chip; chip shows crayon `.sel`, single-select. Saving drops a
 card into the right colour group (Bella → Family → Nature → Me → God order); count is right;
-delete + day-nav still work. Fresh sheet: 7-col header incl. `category`, Metadata
-`schema_version = 2`; category round-trips desktop↔phone. v0.3.0 in header + footer.
+delete still works; swipe/arrow-key day nav re-groups. Fresh sheet: 7-col header incl.
+`category`, Metadata `schema_version = 2`; category round-trips desktop↔phone. Version shows
+in the settings overlay.
 
 ## Manual setup Andy must do before sync works on-device
 
@@ -57,7 +62,7 @@ the visual spec is `notes/style-guide.html`.
 
 ## Conventions
 
-- Current version: **v0.3.1** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories; v0.3.1 layout fixes)
+- Current version: **v0.3.2** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories; v0.3.1 layout fixes; v0.3.2 swipe nav + version in settings)
 - Deploy URL: `https://andybastable-home.github.io/gratitude/`
 - Three-location version bump on every shell commit: `index.html` brand-version span,
   `index.html` footer span, `service-worker.js` `CACHE_VERSION`.

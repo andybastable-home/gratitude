@@ -132,7 +132,7 @@ body > * { position: relative; z-index: 2; }
 .header-actions { display: flex; }
 
 /* frosted disc — lifts off the busy hero watercolour */
-.settings-btn, .nav-btn {
+.settings-btn {
   width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0; cursor: pointer;
   border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
   background: color-mix(in srgb, var(--paper) 80%, transparent);
@@ -141,7 +141,7 @@ body > * { position: relative; z-index: 2; }
   box-shadow: 0 2px 8px -3px hsl(30 30% 20% / 0.28);
 }
 .settings-btn svg { width: 22px; height: 22px; }
-.settings-btn:active, .nav-btn:active { transform: scale(0.96); }
+.settings-btn:active { transform: scale(0.96); }
 
 /* ============================================================
    Day view
@@ -159,19 +159,14 @@ body > * { position: relative; z-index: 2; }
 }
 .day-view { position: relative; z-index: 1; }
 
-.day-nav { display: flex; align-items: center; gap: 10px; padding: 8px 0 14px; }
-.day-heading { flex: 1; min-width: 0; }
+.day-heading { padding: 6px 0 16px; min-width: 0; }
 .day-date {
-  font-family: var(--font-hand); font-weight: 700; font-size: 42px; line-height: 0.98;
-  color: var(--accent-deep); margin: 0;
+  font-family: var(--font-hand); font-weight: 700; font-size: 38px; line-height: 0.98;
+  color: var(--accent-deep); margin: 0; white-space: nowrap;
   text-shadow:
           -1px -1px 0 var(--paper), 1px -1px 0 var(--paper),
           -1px  1px 0 var(--paper), 1px  1px 0 var(--paper),
           0 0 12px var(--paper), 0 0 22px var(--paper);
-}
-.today-btn {
-  margin-top: 4px; font-family: var(--font-body); font-size: 12.5px; font-weight: 600;
-  border: none; background: none; color: var(--accent-deep); cursor: pointer; padding: 0;
 }
 .day-meta { margin: 6px 0 0; }
 .day-meta .count { font-size: 13.5px; color: var(--ink-soft); }
@@ -372,11 +367,6 @@ body > * { position: relative; z-index: 2; }
 .add-btn.is-disabled { background: color-mix(in srgb, var(--ink) 16%, var(--paper)); color: var(--ink-faint); box-shadow: none; cursor: default; }
 
 /* ============================================================
-   Footer
-   ============================================================ */
-.app-footer { position: relative; z-index: 12; text-align: center; padding: 14px; font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); }
-
-/* ============================================================
    Settings / Sync overlay — bottom sheet
    ============================================================ */
 .settings-overlay {
@@ -405,7 +395,8 @@ body > * { position: relative; z-index: 2; }
 .sync-status.is-error { color: hsl(2 65% 45%); }
 .sync-status.is-ok { color: hsl(140 40% 34%); }
 .sync-status.is-info { color: var(--ink-soft); }
+.settings-version { margin: 18px 0 0; text-align: center; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); }
 
 @media (prefers-reduced-motion: reduce) {
-  .settings-btn:active, .nav-btn:active, .btn-primary:active { transform: none; }
+  .settings-btn:active, .btn-primary:active { transform: none; }
 }

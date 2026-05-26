@@ -62,7 +62,8 @@ function formatHeading(d) {
   const target = isoDate(d);
   if (target === isoDate(new Date())) return 'Today';
   if (target === isoDate(addDays(new Date(), -1))) return 'Yesterday';
-  return `${DAY_NAMES[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+  // Abbreviated month (matches the style-guide concept; keeps the date on one line).
+  return `${DAY_NAMES[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0, 3)}`;
 }
 function formatTime(ts) {
   const d = new Date(ts);
@@ -108,9 +109,7 @@ let currentDate = startOfDay(new Date());
 const els = {
   date:  document.getElementById('day-date'),
   count: document.getElementById('day-count'),
-  prev:  document.getElementById('day-prev'),
-  next:  document.getElementById('day-next'),
-  today: document.getElementById('day-today'),
+  main:  document.querySelector('.app-main'),
   list:  document.getElementById('entry-list'),
   fab:   document.getElementById('fab'),
 };
@@ -320,12 +319,46 @@ function submitCompose() {
 }
 
 // ------------------------------------------------------------------
+// Day navigation — swipe (phone) + arrow keys (desktop)
+// ------------------------------------------------------------------
+function bindDayNav() {
+  // Horizontal swipe on the day surface: left → next day, right → previous day.
+  if (els.main) {
+    let startX = 0, startY = 0, tracking = false;
+    els.main.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) { tracking = false; return; }
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
+    }, { passive: true });
+    els.main.addEventListener('touchend', (e) => {
+      if (!tracking) return;
+      tracking = false;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      // Need a clear, mostly-horizontal gesture so we don't hijack vertical scroll.
+      if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+      setDate(addDays(currentDate, dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    if (compose.overlay && !compose.overlay.hidden) return;
+    const settings = document.getElementById('settings-overlay');
+    if (settings && !settings.hidden) return;
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    setDate(addDays(currentDate, e.key === 'ArrowLeft' ? -1 : 1));
+  });
+}
+
+// ------------------------------------------------------------------
 // Init
 // ------------------------------------------------------------------
 function init() {
-  els.prev && els.prev.addEventListener('click', () => setDate(addDays(currentDate, -1)));
-  els.next && els.next.addEventListener('click', () => setDate(addDays(currentDate, 1)));
-  els.today && els.today.addEventListener('click', () => setDate(new Date()));
+  bindDayNav();
 
   buildChips();
   els.fab && els.fab.addEventListener('click', openCompose);

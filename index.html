@@ -82,25 +82,16 @@
 
   <main class="app-main">
     <section class="day-view">
-      <div class="day-nav">
-        <button id="day-prev" class="nav-btn" type="button" aria-label="Previous day">&#9664;</button>
-        <div class="day-heading">
-          <h1 id="day-date" class="day-date">&mdash;</h1>
-          <p class="day-meta"><span id="day-count" class="count"></span></p>
-          <button id="day-today" class="today-btn" type="button">Jump to today</button>
-        </div>
-        <button id="day-next" class="nav-btn" type="button" aria-label="Next day">&#9654;</button>
+      <div class="day-heading">
+        <h1 id="day-date" class="day-date">&mdash;</h1>
+        <p class="day-meta"><span id="day-count" class="count"></span></p>
       </div>
 
       <div id="entry-list" class="day-groups"></div>
     </section>
   </main>
 
-  <footer class="app-footer">
-    <span>v0.3.1 &middot; offline-ready</span>
-  </footer>
-
-  <!-- bottom fade + FAB live at body level so they stack above the footer and stay tappable -->
+  <!-- bottom fade + FAB live at body level so they stay above content and tappable -->
   <div class="screen-fade" aria-hidden="true"></div>
   <button id="fab" class="fab" type="button" aria-label="Add a gratitude">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-plus"/></svg>
@@ -154,6 +145,7 @@
           <a id="sync-sheet-link" class="btn btn-ghost" href="#" target="_blank" rel="noopener" hidden>Open sheet</a>
         </div>
         <p id="sync-status" class="sync-status" aria-live="polite"></p>
+        <p class="settings-version">Gratitude v0.3.2 &middot; offline-ready</p>
       </div>
     </div>
   </div>

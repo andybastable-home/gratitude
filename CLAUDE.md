@@ -121,8 +121,9 @@ delete it — don't accrete.
 **Bump the version with every commit.** Version numbers are how Andy confirms the correct
 build loaded on his phone.
 
-- Version lives in **two places** — bump both in lockstep: the `index.html` footer span and
-  `service-worker.js` `CACHE_VERSION`. (The header brand-version span was removed in v0.3.1.)
+- Version lives in **two places** — bump both in lockstep: the `index.html` settings-overlay
+  version line (`.settings-version`) and `service-worker.js` `CACHE_VERSION`. (The header
+  brand-version span was removed in v0.3.1; the footer was removed in v0.3.2.)
 - Semver patch bumps (v0.1.0 → v0.1.1) for most changes; minor bumps for phase milestones.
 
 ## Constraints
