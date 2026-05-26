@@ -253,11 +253,11 @@ body > * { position: relative; z-index: 2; }
 }
 .entry.is-open .entry-actions { display: flex; }
 .entry-delete {
-  border: none; background: none; cursor: pointer; padding: 5px 10px; border-radius: 9px;
-  font-family: var(--font-body); font-size: 13px; font-weight: 700; letter-spacing: 0.01em;
-  color: hsl(2 60% 47%);
+  border: none; background: none; cursor: pointer; padding: 2px 10px; border-radius: 9px;
+  font-family: var(--font-hand); font-size: 19px; font-weight: 700; line-height: 1;
+  color: var(--c);
 }
-.entry-delete:active { background: color-mix(in srgb, hsl(2 60% 47%) 13%, transparent); }
+.entry-delete:active { background: color-mix(in srgb, var(--c) 13%, transparent); }
 
 .entry-empty {
   font-family: var(--font-hand); font-weight: 600; font-size: 22px;

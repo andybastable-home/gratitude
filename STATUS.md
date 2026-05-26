@@ -2,7 +2,10 @@
 
 ## Current phase
 
-**Phase 4 — Logging & categorising** done at **v0.3.5** (awaiting Andy's on-device verification)
+**Phase 4 — Logging & categorising** done at **v0.3.6** (awaiting Andy's on-device verification)
+
+**v0.3.6:** the entry Delete button is now Caveat in the category-label colour (`var(--c)`) so
+it reads as part of the design rather than a jarring red.
 
 **v0.3.3–v0.3.4:** swipe/arrow nav can't go past today (no logging the future); day count.
 **v0.3.5:** count reads "N things this day"; back-dated entries stamp the real time-of-day
