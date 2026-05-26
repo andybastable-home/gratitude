@@ -177,6 +177,13 @@ function setDate(d) {
   renderDay();
 }
 
+// Step by `delta` days, but never past today (no logging the future).
+function navigateDay(delta) {
+  const target = addDays(currentDate, delta);
+  if (isoDate(target) > isoDate(new Date())) return;
+  setDate(target);
+}
+
 // ------------------------------------------------------------------
 // Rendering
 // ------------------------------------------------------------------
@@ -225,14 +232,19 @@ function catGroup(entries, cat) {
 
 async function renderDay() {
   applySeason(currentDate);
-  if (els.date) els.date.textContent = formatHeading(currentDate);
+  const heading = formatHeading(currentDate);
+  if (els.date) els.date.textContent = heading;
   const entries = await getEntriesForDate(currentDate);
   entries.sort((a, b) => a.timestamp - b.timestamp);
 
   if (els.count) {
-    els.count.innerHTML = entries.length
-      ? `<strong>${entries.length}</strong> ${entries.length === 1 ? 'thing' : 'things'}`
-      : '';
+    if (!entries.length) {
+      els.count.innerHTML = '';
+    } else {
+      const noun = entries.length === 1 ? 'thing' : 'things';
+      const when = heading === 'Today' ? ' today' : heading === 'Yesterday' ? ' yesterday' : '';
+      els.count.innerHTML = `<strong>${entries.length}</strong> ${noun}${when}`;
+    }
   }
 
   els.list.innerHTML = '';
@@ -339,7 +351,7 @@ function bindDayNav() {
       const dy = t.clientY - startY;
       // Need a clear, mostly-horizontal gesture so we don't hijack vertical scroll.
       if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
-      setDate(addDays(currentDate, dx < 0 ? 1 : -1));
+      navigateDay(dx < 0 ? 1 : -1);
     }, { passive: true });
   }
 
@@ -350,7 +362,7 @@ function bindDayNav() {
     if (settings && !settings.hidden) return;
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-    setDate(addDays(currentDate, e.key === 'ArrowLeft' ? -1 : 1));
+    navigateDay(e.key === 'ArrowLeft' ? -1 : 1);
   });
 }
 

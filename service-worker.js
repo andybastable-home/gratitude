@@ -1,5 +1,5 @@
 // Bump CACHE_VERSION whenever shell files change so updates roll cleanly.
-const CACHE_VERSION = 'v0.3.2';
+const CACHE_VERSION = 'v0.3.3';
 const CACHE_NAME = `gratitude-shell-${CACHE_VERSION}`;
 
 const SHELL = [

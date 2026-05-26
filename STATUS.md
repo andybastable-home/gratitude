@@ -2,7 +2,10 @@
 
 ## Current phase
 
-**Phase 4 — Logging & categorising** done at **v0.3.2** (awaiting Andy's on-device verification)
+**Phase 4 — Logging & categorising** done at **v0.3.3** (awaiting Andy's on-device verification)
+
+**v0.3.3:** swipe/arrow nav can't go past today (no logging the future); day count reads
+"N things today" / "N things yesterday" / "N things" by context.
 
 **v0.3.1 layout fixes:** hero moved to body-top (behind the transparent header, spans the
 column edge-to-edge — fixes the "header band" gap + the desktop side-leak); FAB + screen-fade
@@ -62,7 +65,7 @@ the visual spec is `notes/style-guide.html`.
 
 ## Conventions
 
-- Current version: **v0.3.2** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories; v0.3.1 layout fixes; v0.3.2 swipe nav + version in settings)
+- Current version: **v0.3.3** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories; v0.3.1 layout fixes; v0.3.2 swipe nav + version in settings; v0.3.3 no future nav + contextual count)
 - Deploy URL: `https://andybastable-home.github.io/gratitude/`
 - Three-location version bump on every shell commit: `index.html` brand-version span,
   `index.html` footer span, `service-worker.js` `CACHE_VERSION`.
