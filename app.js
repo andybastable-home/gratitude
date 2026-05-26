@@ -238,13 +238,9 @@ async function renderDay() {
   entries.sort((a, b) => a.timestamp - b.timestamp);
 
   if (els.count) {
-    if (!entries.length) {
-      els.count.innerHTML = '';
-    } else {
-      const noun = entries.length === 1 ? 'thing' : 'things';
-      const when = heading === 'Today' ? ' today' : heading === 'Yesterday' ? ' yesterday' : '';
-      els.count.innerHTML = `<strong>${entries.length}</strong> ${noun}${when}`;
-    }
+    els.count.innerHTML = entries.length
+      ? `<strong>${entries.length}</strong> ${entries.length === 1 ? 'thing' : 'things'} today`
+      : '';
   }
 
   els.list.innerHTML = '';
