@@ -148,9 +148,10 @@ body > * { position: relative; z-index: 2; }
    ============================================================ */
 .app-main { position: relative; flex: 1; width: 100%; padding: 0 18px 120px; }
 
-/* seasonal hero — painterly watercolour, fades into the paper */
+/* seasonal hero — painterly watercolour at the very top of the column, behind the
+   transparent header; spans the column edge-to-edge (no bleed past it on desktop) */
 .hero {
-  position: absolute; top: 0; left: -18px; right: -18px; height: 210px; z-index: 0;
+  position: absolute; top: 0; left: 0; right: 0; height: 210px; z-index: 1;
   background-size: cover; background-position: top right; background-repeat: no-repeat;
   mix-blend-mode: multiply; opacity: 0.85; pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95) 38%, transparent 100%);
@@ -263,7 +264,8 @@ body > * { position: relative; z-index: 2; }
 
 /* ---- FAB + bottom fade (fixed to the phone column, corrected for the centred 412px frame) ---- */
 .fab {
-  position: fixed; right: max(18px, calc(50% - 188px)); bottom: 22px; z-index: 20;
+  position: fixed; right: max(18px, calc(50% - 188px)); z-index: 20;
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
   width: 60px; height: 60px; border-radius: 50%; border: none;
   background: var(--accent); color: hsl(40 60% 98%); display: grid; place-items: center; cursor: pointer;
   box-shadow: 0 12px 26px -8px var(--accent), 0 4px 10px -4px hsl(0 0% 0% / 0.25);
@@ -272,7 +274,7 @@ body > * { position: relative; z-index: 2; }
 .fab svg { width: 28px; height: 28px; }
 .fab:active { transform: scale(0.94); }
 .screen-fade {
-  position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 10;
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 5;
   width: 100%; max-width: 412px; height: 96px; pointer-events: none;
   background: linear-gradient(to top, var(--paper) 14%, transparent);
 }
@@ -372,7 +374,7 @@ body > * { position: relative; z-index: 2; }
 /* ============================================================
    Footer
    ============================================================ */
-.app-footer { text-align: center; padding: 14px; font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); }
+.app-footer { position: relative; z-index: 12; text-align: center; padding: 14px; font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); }
 
 /* ============================================================
    Settings / Sync overlay — bottom sheet

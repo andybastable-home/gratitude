@@ -2,7 +2,13 @@
 
 ## Current phase
 
-**Phase 4 — Logging & categorising** done at **v0.3.0** (awaiting Andy's on-device verification)
+**Phase 4 — Logging & categorising** done at **v0.3.1** (awaiting Andy's on-device verification)
+
+**v0.3.1 layout fixes (post-review):** hero moved to body-top (behind the transparent header,
+spans the column edge-to-edge — fixes the "header band" gap + the desktop side-leak); FAB +
+screen-fade moved to body level with z-index above the footer so the FAB is tappable on phone
+(plus `env(safe-area-inset-bottom)` so it clears the gesture bar); removed the header version
+span (version now footer + SW only).
 
 Phases 1–3 done (sync v0.1.0, style guide, design system applied v0.2.0). Phase 4 adds the
 real logging UX + categories, to the locked spec in `notes/style-guide.html`.
@@ -51,7 +57,7 @@ the visual spec is `notes/style-guide.html`.
 
 ## Conventions
 
-- Current version: **v0.3.0** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories)
+- Current version: **v0.3.1** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories; v0.3.1 layout fixes)
 - Deploy URL: `https://andybastable-home.github.io/gratitude/`
 - Three-location version bump on every shell commit: `index.html` brand-version span,
   `index.html` footer span, `service-worker.js` `CACHE_VERSION`.

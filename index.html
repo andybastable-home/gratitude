@@ -58,6 +58,9 @@
     </defs>
   </svg>
 
+  <!-- seasonal hero sits at the very top of the column; the transparent header floats over it -->
+  <div class="hero" aria-hidden="true"></div>
+
   <header class="app-header">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true">
@@ -66,7 +69,6 @@
         </svg>
       </span>
       <span class="brand-name">Gratitude</span>
-      <span class="brand-version" aria-label="App version">v0.3.0</span>
     </div>
     <div class="header-actions">
       <button id="settings-btn" class="settings-btn" type="button" aria-label="Settings">
@@ -79,7 +81,6 @@
   </header>
 
   <main class="app-main">
-    <div class="hero" aria-hidden="true"></div>
     <section class="day-view">
       <div class="day-nav">
         <button id="day-prev" class="nav-btn" type="button" aria-label="Previous day">&#9664;</button>
@@ -93,16 +94,17 @@
 
       <div id="entry-list" class="day-groups"></div>
     </section>
-
-    <div class="screen-fade" aria-hidden="true"></div>
-    <button id="fab" class="fab" type="button" aria-label="Add a gratitude">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-plus"/></svg>
-    </button>
   </main>
 
   <footer class="app-footer">
-    <span>v0.3.0 &middot; offline-ready</span>
+    <span>v0.3.1 &middot; offline-ready</span>
   </footer>
+
+  <!-- bottom fade + FAB live at body level so they stack above the footer and stay tappable -->
+  <div class="screen-fade" aria-hidden="true"></div>
+  <button id="fab" class="fab" type="button" aria-label="Add a gratitude">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-plus"/></svg>
+  </button>
 
   <!-- Full-screen compose (FAB opens it) -->
   <div class="compose-overlay" id="compose-overlay" hidden>
