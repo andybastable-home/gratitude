@@ -2,10 +2,12 @@
 
 ## Current phase
 
-**Phase 4 — Logging & categorising** done at **v0.3.4** (awaiting Andy's on-device verification)
+**Phase 4 — Logging & categorising** done at **v0.3.5** (awaiting Andy's on-device verification)
 
-**v0.3.3–v0.3.4:** swipe/arrow nav can't go past today (no logging the future); day count
-always reads "N things today" ("today" = the displayed day).
+**v0.3.3–v0.3.4:** swipe/arrow nav can't go past today (no logging the future); day count.
+**v0.3.5:** count reads "N things this day"; back-dated entries stamp the real time-of-day
+(not a flat noon); delete is now tap-card → tap "Delete" (the `.entry-actions` row, room for a
+future Edit button); install icon redrawn to match the header heart on the accent-pink tile.
 
 **v0.3.1 layout fixes:** hero moved to body-top (behind the transparent header, spans the
 column edge-to-edge — fixes the "header band" gap + the desktop side-leak); FAB + screen-fade
@@ -65,7 +67,7 @@ the visual spec is `notes/style-guide.html`.
 
 ## Conventions
 
-- Current version: **v0.3.3** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories; v0.3.1 layout fixes; v0.3.2 swipe nav + version in settings; v0.3.3 no future nav; v0.3.4 "N things today" on every day)
+- Current version: **v0.3.3** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories; v0.3.1 layout fixes; v0.3.2 swipe nav + version in settings; v0.3.3 no future nav; v0.3.5 "this day" count + real back-dated times + tap-to-delete + real icon)
 - Deploy URL: `https://andybastable-home.github.io/gratitude/`
 - Three-location version bump on every shell commit: `index.html` brand-version span,
   `index.html` footer span, `service-worker.js` `CACHE_VERSION`.

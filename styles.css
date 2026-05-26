@@ -206,9 +206,9 @@ body > * { position: relative; z-index: 2; }
 
 .entry {
   /* --c is inherited from the enclosing .cat-group (per-category colour;
-     fallback group → season accent). Right padding leaves room for the delete button. */
-  position: relative; padding: 13px 38px 11px 16px; border-radius: 16px;
-  cursor: default; z-index: 1;
+     fallback group → season accent). Tap toggles the action row below. */
+  position: relative; padding: 13px 16px 11px; border-radius: 16px;
+  cursor: pointer; z-index: 1;
 }
 .entry::before, .entry::after {
   content: ""; position: absolute; pointer-events: none;
@@ -245,12 +245,19 @@ body > * { position: relative; z-index: 2; }
   font-family: var(--font-hand); font-weight: 600; font-size: 16px;
   color: var(--ink-faint); opacity: 0.7; line-height: 1;
 }
-.entry-del {
-  position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; z-index: 2;
-  border: none; background: none; color: var(--ink-faint); opacity: 0.55;
-  font-size: 20px; line-height: 1; cursor: pointer; border-radius: 8px;
+/* revealed on tap; bordered in the card's category ink. Room for an Edit button later. */
+.entry-actions {
+  display: none; justify-content: flex-end; gap: 8px;
+  margin-top: 9px; padding-top: 9px;
+  border-top: 1px solid color-mix(in srgb, var(--c) 22%, transparent);
 }
-.entry-del:active { opacity: 1; background: color-mix(in srgb, var(--c) 12%, transparent); }
+.entry.is-open .entry-actions { display: flex; }
+.entry-delete {
+  border: none; background: none; cursor: pointer; padding: 5px 10px; border-radius: 9px;
+  font-family: var(--font-body); font-size: 13px; font-weight: 700; letter-spacing: 0.01em;
+  color: hsl(2 60% 47%);
+}
+.entry-delete:active { background: color-mix(in srgb, hsl(2 60% 47%) 13%, transparent); }
 
 .entry-empty {
   font-family: var(--font-hand); font-weight: 600; font-size: 22px;

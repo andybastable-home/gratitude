@@ -145,9 +145,13 @@ window.getUnsyncedEntries = getUnsyncedEntries;
 async function addEntry(text, category) {
   const trimmed = (text || '').trim();
   if (!trimmed) return;
-  const onToday = isoDate(currentDate) === isoDate(new Date());
-  // For past days, anchor the moment to noon so it can't drift across a day boundary.
-  const timestamp = onToday ? Date.now() : startOfDay(currentDate).getTime() + 12 * 3600 * 1000;
+  // Stamp the viewed day with the current time-of-day. For today this is "now"; for a
+  // back-dated entry it keeps a real clock time (not a flat noon) while staying inside the
+  // chosen day (so the stamp's date can't drift away from iso_date).
+  const now = new Date();
+  const stamp = startOfDay(currentDate);
+  stamp.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+  const timestamp = stamp.getTime();
   await db.entries.add({
     uuid: uuid(),
     type: 'gratitude',
@@ -189,6 +193,11 @@ function navigateDay(delta) {
 // ------------------------------------------------------------------
 // One sketch counter shared across all groups so neighbouring cards always differ.
 let sketchCursor = 0;
+function closeAllEntries() {
+  if (!els.list) return;
+  els.list.querySelectorAll('.entry.is-open').forEach((c) => c.classList.remove('is-open'));
+}
+
 function entryCard(e) {
   const card = document.createElement('article');
   card.className = `entry s${(sketchCursor++ % 3) + 1}`;
@@ -201,14 +210,23 @@ function entryCard(e) {
   time.className = 'entry-time';
   time.textContent = formatTime(e.timestamp);
 
+  // Tapping the card reveals a confirm-by-tap action row (room for Edit later).
+  const actions = document.createElement('div');
+  actions.className = 'entry-actions';
   const del = document.createElement('button');
-  del.className = 'entry-del';
   del.type = 'button';
-  del.setAttribute('aria-label', 'Delete entry');
-  del.textContent = '×';
-  del.addEventListener('click', () => deleteEntry(e.id));
+  del.className = 'entry-delete';
+  del.textContent = 'Delete';
+  del.addEventListener('click', (ev) => { ev.stopPropagation(); deleteEntry(e.id); });
+  actions.appendChild(del);
 
-  card.append(p, time, del);
+  card.append(p, time, actions);
+  card.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const open = card.classList.contains('is-open');
+    closeAllEntries();
+    if (!open) card.classList.add('is-open');
+  });
   return card;
 }
 
@@ -239,7 +257,7 @@ async function renderDay() {
 
   if (els.count) {
     els.count.innerHTML = entries.length
-      ? `<strong>${entries.length}</strong> ${entries.length === 1 ? 'thing' : 'things'} today`
+      ? `<strong>${entries.length}</strong> ${entries.length === 1 ? 'thing' : 'things'} this day`
       : '';
   }
 
@@ -367,6 +385,8 @@ function bindDayNav() {
 // ------------------------------------------------------------------
 function init() {
   bindDayNav();
+  // A tap anywhere outside an open entry collapses its action row.
+  document.addEventListener('click', closeAllEntries);
 
   buildChips();
   els.fab && els.fab.addEventListener('click', openCompose);
