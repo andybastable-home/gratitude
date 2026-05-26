@@ -2,34 +2,34 @@
 
 ## Current phase
 
-**Phase 3 — Implement styles** (built at v0.2.0; awaiting Andy's on-device verification)
+**Phase 4 — Logging & categorising** done at **v0.3.0** (awaiting Andy's on-device verification)
 
-Phase 1 (sync) done at v0.1.0; Phase 2 (style guide) done. Phase 3 has now applied the
-design system to the **real app** (visual spec: `notes/style-guide.html`; rationale:
-`notes/phase-2-decisions.md`). Light-only.
+Phases 1–3 done (sync v0.1.0, style guide, design system applied v0.2.0). Phase 4 adds the
+real logging UX + categories, to the locked spec in `notes/style-guide.html`.
 
-**Phase 3 landed (v0.2.0):**
-- `styles.css` rewritten to the design system: `:root` tokens, six `.theme-*` season classes,
-  warm-paper bg + grain + radial wash, header (accent heart tile + Caveat wordmark + frosted
-  gear), seasonal hero band, big Caveat day-date, hand-drawn crayon entry cards (`#sketch1/2/3`
-  filters), restyled nav / add-form / settings sheet. Dark-mode removed.
-- `index.html`: links `assets/fonts/fonts.css`; inline SVG sketch filter defs; `.hero` element;
-  single light `theme-color`; default `theme-earlysummer` body class.
-- `app.js`: `seasonForDate()` sets the body theme class from the **viewed day's month** (nav
-  between days changes the season); entries render as `.entry` crayon cards (cycle `s1/2/3`)
-  with a faint Caveat timestamp; UK date order ("Sunday, 25 May").
-- `service-worker.js`: `CACHE_VERSION` v0.2.0; precache fonts + 6 heroes. `manifest.json`
-  theme/background colour aligned to cream `#f4ecdd` (was purple — flagged).
+**Phase 4 landed (v0.3.0):**
+- Five fixed categories (`CATEGORIES` in `app.js`, single source of truth): Bella / Family /
+  Nature / Me / God, each a fixed colour + line-icon. A category is **required** to save.
+- `index.html`: removed the dev-harness add-form; added the floating **FAB**, the full-screen
+  **compose overlay** (`#compose-overlay`: real `<textarea>`, prompt, category chips, Add
+  button), an **icon sprite** (`#ic-*`) + **`#chip1/2`** filters, a **day-meta** count line and
+  a **screen-fade**.
+- `app.js`: `addEntry(text, category)`; `renderDay()` now **groups by category** (fixed order,
+  per-category card ink + icon heading; uncategorised/legacy rows fall into a headingless
+  fallback group last); compose controller (open/close, single-select chips, live Add
+  enable/disable, Escape to close).
+- `styles.css`: ported the cat-group / FAB / screen-fade / compose / chips / add-btn blocks;
+  `.entry` now inherits `--c` from its group; removed dead `.add-form`/`.add-input`.
+- **Sheet schema v1 → v2:** added column **G `category`**. Old data is **not** migrated — the
+  sheet was cleared, so fresh sheets write at v2 and the backward path was omitted by design.
+  Forward-gate (stall on newer-than-v2 sheet) intact.
+- `service-worker.js`: `CACHE_VERSION` v0.3.0.
 
-**Deferred to Phase 4 (need the category field, which Phase 4 adds):** category *grouping* +
-per-category card colours, and the **FAB → full-screen compose** flow with category chips.
-Phase 3 keeps the inline add-input as the capture method; cards currently take the season
-accent as their ink. PWA install icon (`icons/icon.svg`) still the placeholder — polish later.
-
-**Andy to verify on device / `localhost:8000`:** fonts load (Caveat headers, Figtree body);
-season matches the month and changes when navigating days; hero watercolour shows and fades;
-crayon cards render (wobble + hatch) and stay legible; gear/nav legible on frosted discs;
-add + delete + sync still work; v0.2.0 shows in header + footer.
+**Andy to verify on device / `localhost:8000`:** FAB opens compose; ×/Escape closes; Add
+disabled until text **and** a chip; chip shows crayon `.sel`, single-select. Saving drops a
+card into the right colour group (Bella → Family → Nature → Me → God order); count is right;
+delete + day-nav still work. Fresh sheet: 7-col header incl. `category`, Metadata
+`schema_version = 2`; category round-trips desktop↔phone. v0.3.0 in header + footer.
 
 ## Manual setup Andy must do before sync works on-device
 
@@ -51,7 +51,7 @@ the visual spec is `notes/style-guide.html`.
 
 ## Conventions
 
-- Current version: **v0.1.1** (v0.1.0 = Phase 1; v0.1.1 = sheet-URL persists in settings + app locked to Pixel 8a width)
+- Current version: **v0.3.0** (v0.1.0 Phase 1; v0.2.0 Phase 3 design system; v0.3.0 Phase 4 logging + categories)
 - Deploy URL: `https://andybastable-home.github.io/gratitude/`
 - Three-location version bump on every shell commit: `index.html` brand-version span,
   `index.html` footer span, `service-worker.js` `CACHE_VERSION`.

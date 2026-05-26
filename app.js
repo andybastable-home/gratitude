@@ -89,18 +89,42 @@ function applySeason(d) {
 }
 
 // ------------------------------------------------------------------
+// Categories — single source of truth, fixed display order
+// ------------------------------------------------------------------
+const CATEGORIES = [
+  { key: 'wife',   label: 'Bella',  icon: 'ic-heart' },
+  { key: 'family', label: 'Family', icon: 'ic-family' },
+  { key: 'nature', label: 'Nature', icon: 'ic-leaf' },
+  { key: 'me',     label: 'Me',     icon: 'ic-me' },
+  { key: 'god',    label: 'God',    icon: 'ic-cross' },
+];
+const CATEGORY_BY_KEY = Object.fromEntries(CATEGORIES.map((c) => [c.key, c]));
+
+// ------------------------------------------------------------------
 // State + DOM refs
 // ------------------------------------------------------------------
 let currentDate = startOfDay(new Date());
 
 const els = {
   date:  document.getElementById('day-date'),
+  count: document.getElementById('day-count'),
   prev:  document.getElementById('day-prev'),
   next:  document.getElementById('day-next'),
   today: document.getElementById('day-today'),
-  form:  document.getElementById('add-form'),
-  input: document.getElementById('add-input'),
   list:  document.getElementById('entry-list'),
+  fab:   document.getElementById('fab'),
+};
+
+// compose overlay refs
+const compose = {
+  overlay:  document.getElementById('compose-overlay'),
+  close:    document.getElementById('compose-close'),
+  date:     document.getElementById('compose-date'),
+  field:    document.getElementById('compose-field'),
+  chips:    document.getElementById('compose-chips'),
+  add:      document.getElementById('compose-add'),
+  addLabel: document.getElementById('compose-add-label'),
+  selected: null,
 };
 
 // ------------------------------------------------------------------
@@ -119,7 +143,7 @@ window.getUnsyncedEntries = getUnsyncedEntries;
 // ------------------------------------------------------------------
 // Actions
 // ------------------------------------------------------------------
-async function addEntry(text) {
+async function addEntry(text, category) {
   const trimmed = (text || '').trim();
   if (!trimmed) return;
   const onToday = isoDate(currentDate) === isoDate(new Date());
@@ -131,6 +155,7 @@ async function addEntry(text) {
     timestamp,
     iso_date: isoDate(currentDate),
     text: trimmed,
+    category: category || '',
     synced: false,
   });
   await renderDay();
@@ -156,46 +181,143 @@ function setDate(d) {
 // ------------------------------------------------------------------
 // Rendering
 // ------------------------------------------------------------------
+// One sketch counter shared across all groups so neighbouring cards always differ.
+let sketchCursor = 0;
+function entryCard(e) {
+  const card = document.createElement('article');
+  card.className = `entry s${(sketchCursor++ % 3) + 1}`;
+
+  const p = document.createElement('p');
+  p.className = 'entry-text';
+  p.textContent = e.text;
+
+  const time = document.createElement('span');
+  time.className = 'entry-time';
+  time.textContent = formatTime(e.timestamp);
+
+  const del = document.createElement('button');
+  del.className = 'entry-del';
+  del.type = 'button';
+  del.setAttribute('aria-label', 'Delete entry');
+  del.textContent = '×';
+  del.addEventListener('click', () => deleteEntry(e.id));
+
+  card.append(p, time, del);
+  return card;
+}
+
+function catGroup(entries, cat) {
+  const section = document.createElement('section');
+  section.className = cat ? `cat-group is-${cat.key}` : 'cat-group';
+  if (cat) {
+    const head = document.createElement('h3');
+    head.className = 'cat-head';
+    head.innerHTML =
+      `<svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#${cat.icon}"/></svg>`;
+    head.append(document.createTextNode(cat.label));
+    section.appendChild(head);
+  }
+  const list = document.createElement('div');
+  list.className = 'entry-list';
+  entries.forEach((e) => list.appendChild(entryCard(e)));
+  section.appendChild(list);
+  return section;
+}
+
 async function renderDay() {
   applySeason(currentDate);
   if (els.date) els.date.textContent = formatHeading(currentDate);
   const entries = await getEntriesForDate(currentDate);
   entries.sort((a, b) => a.timestamp - b.timestamp);
 
+  if (els.count) {
+    els.count.innerHTML = entries.length
+      ? `<strong>${entries.length}</strong> ${entries.length === 1 ? 'thing' : 'things'}`
+      : '';
+  }
+
   els.list.innerHTML = '';
+  sketchCursor = 0;
   if (!entries.length) {
-    const li = document.createElement('li');
-    li.className = 'entry-empty';
-    li.textContent = 'Nothing here yet.';
-    els.list.appendChild(li);
+    const empty = document.createElement('div');
+    empty.className = 'entry-empty';
+    empty.textContent = 'Nothing here yet.';
+    els.list.appendChild(empty);
     return;
   }
-  // Hand-drawn crayon cards; cycle three sketch variants so neighbours differ.
-  // (Phase 4 will group by category and colour each card by its category.)
-  entries.forEach((e, i) => {
-    const li = document.createElement('li');
-    li.className = `entry s${(i % 3) + 1}`;
 
-    const p = document.createElement('p');
-    p.className = 'entry-text';
-    p.textContent = e.text;
-
-    const time = document.createElement('span');
-    time.className = 'entry-time';
-    time.textContent = formatTime(e.timestamp);
-
-    const del = document.createElement('button');
-    del.className = 'entry-del';
-    del.type = 'button';
-    del.setAttribute('aria-label', 'Delete entry');
-    del.textContent = '×';
-    del.addEventListener('click', () => deleteEntry(e.id));
-
-    li.append(p, time, del);
-    els.list.appendChild(li);
-  });
+  // Known categories first, in fixed order; uncategorised/legacy rows fall into a
+  // headingless neutral group rendered last.
+  for (const cat of CATEGORIES) {
+    const group = entries.filter((e) => e.category === cat.key);
+    if (group.length) els.list.appendChild(catGroup(group, cat));
+  }
+  const leftover = entries.filter((e) => !CATEGORY_BY_KEY[e.category]);
+  if (leftover.length) els.list.appendChild(catGroup(leftover, null));
 }
 window.renderDay = renderDay;
+
+// ------------------------------------------------------------------
+// Compose (full-screen) controller
+// ------------------------------------------------------------------
+function buildChips() {
+  if (!compose.chips) return;
+  compose.chips.innerHTML = '';
+  for (const cat of CATEGORIES) {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = `chip is-${cat.key}`;
+    chip.dataset.key = cat.key;
+    chip.innerHTML =
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#${cat.icon}"/></svg>`;
+    chip.append(document.createTextNode(cat.label));
+    chip.addEventListener('click', () => selectChip(cat.key));
+    compose.chips.appendChild(chip);
+  }
+}
+
+function selectChip(key) {
+  compose.selected = key;
+  if (compose.chips) {
+    for (const chip of compose.chips.children) {
+      chip.classList.toggle('sel', chip.dataset.key === key);
+    }
+  }
+  updateAddState();
+}
+
+function updateAddState() {
+  const ready = !!compose.field?.value.trim() && !!compose.selected;
+  if (!compose.add) return;
+  compose.add.disabled = !ready;
+  compose.add.classList.toggle('is-disabled', !ready);
+}
+
+function openCompose() {
+  if (!compose.overlay) return;
+  compose.selected = null;
+  if (compose.field) compose.field.value = '';
+  if (compose.chips) for (const chip of compose.chips.children) chip.classList.remove('sel');
+  if (compose.date) compose.date.textContent = formatHeading(currentDate);
+  if (compose.addLabel) {
+    const onToday = isoDate(currentDate) === isoDate(new Date());
+    compose.addLabel.textContent = onToday ? 'Add to today' : `Add to ${formatHeading(currentDate)}`;
+  }
+  updateAddState();
+  compose.overlay.hidden = false;
+  if (compose.field) compose.field.focus();
+}
+
+function closeCompose() {
+  if (compose.overlay) compose.overlay.hidden = true;
+}
+
+function submitCompose() {
+  const text = compose.field?.value || '';
+  if (!text.trim() || !compose.selected) return;
+  addEntry(text, compose.selected);
+  closeCompose();
+}
 
 // ------------------------------------------------------------------
 // Init
@@ -205,11 +327,13 @@ function init() {
   els.next && els.next.addEventListener('click', () => setDate(addDays(currentDate, 1)));
   els.today && els.today.addEventListener('click', () => setDate(new Date()));
 
-  els.form && els.form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    addEntry(els.input.value);
-    els.input.value = '';
-    els.input.focus();
+  buildChips();
+  els.fab && els.fab.addEventListener('click', openCompose);
+  compose.close && compose.close.addEventListener('click', closeCompose);
+  compose.field && compose.field.addEventListener('input', updateAddState);
+  compose.add && compose.add.addEventListener('click', submitCompose);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && compose.overlay && !compose.overlay.hidden) closeCompose();
   });
 
   const settingsBtn = document.getElementById('settings-btn');

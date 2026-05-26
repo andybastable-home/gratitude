@@ -31,6 +31,30 @@
         <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
         <feGaussianBlur in="d" stdDeviation="0.6"/>
       </filter>
+      <!-- smaller-scale variants for the selected-chip crayon treatment -->
+      <filter id="chip1" x="-14%" y="-14%" width="128%" height="128%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="0.5"/>
+      </filter>
+      <filter id="chip2" x="-14%" y="-14%" width="128%" height="128%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="2" seed="24" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="0.5"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- icon sprite reused via <use href> on cat-group headings, chips, FAB, compose close -->
+  <svg class="svg-defs" aria-hidden="true">
+    <defs>
+      <g id="ic-heart"><path d="M12 20s-7-4.35-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 0c0 5.15-7 9.5-7 9.5z"/></g>
+      <g id="ic-leaf"><path d="M5 21c0-9 6-15 14-16 1 9-5 16-14 16z"/><path d="M5 21c4-6 8-9 12-10"/></g>
+      <g id="ic-family"><circle cx="9" cy="8" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a2.8 2.8 0 0 1 0 5.4"/><path d="M16.5 14.2a4.5 4.5 0 0 1 4 5.3"/></g>
+      <g id="ic-me"><circle cx="12" cy="8" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></g>
+      <g id="ic-cross"><path d="M12 3v18"/><path d="M7 8.5h10"/></g>
+      <g id="ic-plus"><path d="M12 5v14M5 12h14"/></g>
+      <g id="ic-close"><path d="M6 6l12 12M18 6L6 18"/></g>
     </defs>
   </svg>
 
@@ -42,7 +66,7 @@
         </svg>
       </span>
       <span class="brand-name">Gratitude</span>
-      <span class="brand-version" aria-label="App version">v0.2.0</span>
+      <span class="brand-version" aria-label="App version">v0.3.0</span>
     </div>
     <div class="header-actions">
       <button id="settings-btn" class="settings-btn" type="button" aria-label="Settings">
@@ -61,24 +85,49 @@
         <button id="day-prev" class="nav-btn" type="button" aria-label="Previous day">&#9664;</button>
         <div class="day-heading">
           <h1 id="day-date" class="day-date">&mdash;</h1>
+          <p class="day-meta"><span id="day-count" class="count"></span></p>
           <button id="day-today" class="today-btn" type="button">Jump to today</button>
         </div>
         <button id="day-next" class="nav-btn" type="button" aria-label="Next day">&#9654;</button>
       </div>
 
-      <!-- Dev harness: a plain text input. Phase 4 replaces this with the real logging UX. -->
-      <form id="add-form" class="add-form">
-        <input id="add-input" class="add-input" type="text" placeholder="What are you grateful for?" autocomplete="off">
-        <button id="add-btn" class="btn btn-primary" type="submit">Add</button>
-      </form>
-
-      <ul id="entry-list" class="entry-list"></ul>
+      <div id="entry-list" class="day-groups"></div>
     </section>
+
+    <div class="screen-fade" aria-hidden="true"></div>
+    <button id="fab" class="fab" type="button" aria-label="Add a gratitude">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-plus"/></svg>
+    </button>
   </main>
 
   <footer class="app-footer">
-    <span>v0.2.0 &middot; offline-ready</span>
+    <span>v0.3.0 &middot; offline-ready</span>
   </footer>
+
+  <!-- Full-screen compose (FAB opens it) -->
+  <div class="compose-overlay" id="compose-overlay" hidden>
+    <div class="hero" aria-hidden="true"></div>
+    <div class="compose" role="dialog" aria-modal="true" aria-label="Write a gratitude">
+      <div class="compose-top">
+        <button id="compose-close" class="icon-btn" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-close"/></svg>
+        </button>
+      </div>
+      <div class="compose-body">
+        <p id="compose-date" class="compose-date"></p>
+        <p class="compose-prompt">What are you grateful for?</p>
+        <textarea id="compose-field" class="compose-field" placeholder="Write it down&hellip;" rows="3"></textarea>
+        <p class="field-label">Which part of life?</p>
+        <div id="compose-chips" class="chips"></div>
+      </div>
+      <div class="compose-foot">
+        <button id="compose-add" class="add-btn is-disabled" type="button" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-plus"/></svg>
+          <span id="compose-add-label">Add to today</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Settings / Sync overlay -->
   <div class="settings-overlay" id="settings-overlay" hidden>

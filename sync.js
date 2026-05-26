@@ -13,11 +13,14 @@ const EMAIL_KEY     = 'gr.email';
 // Token cached in sessionStorage so SW-triggered reloads don't re-fire the silent OAuth flow.
 const TOKEN_CACHE_KEY = 'gr.sync.token';
 
-const SHEET_SCHEMA_VERSION = 1;
+// v2 (Phase 4): adds the `category` column (G). Old data is not migrated — Phase 4
+// shipped on a cleared sheet, so fresh sheets are written at v2 and the backward path
+// is intentionally omitted. The forward-gate below still stalls a newer-than-v2 sheet.
+const SHEET_SCHEMA_VERSION = 2;
 
-const ENTRIES_HEADER = ['uuid', 'epoch', 'iso_date', 'type', 'text', 'synced_at'];
-const ENTRIES_RANGE_ALL = 'Entries!A:F';
-const ENTRIES_ROW_RANGE = (rowNum) => `Entries!A${rowNum}:F${rowNum}`;
+const ENTRIES_HEADER = ['uuid', 'epoch', 'iso_date', 'type', 'text', 'synced_at', 'category'];
+const ENTRIES_RANGE_ALL = 'Entries!A:G';
+const ENTRIES_ROW_RANGE = (rowNum) => `Entries!A${rowNum}:G${rowNum}`;
 
 const ENTRY_CONVENTION_NOTE =
   'Each row is one gratitude entry. uuid is the stable id used for cross-client merge. ' +
@@ -193,7 +196,7 @@ async function ensureSheet() {
   console.log('[sync] Sheet created:', sid);
 
   await apiCall(
-    `https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Entries!A1:F1?valueInputOption=RAW`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Entries!A1:G1?valueInputOption=RAW`,
     { method: 'PUT', body: JSON.stringify({ values: [ENTRIES_HEADER] }) }
   );
   await apiCall(
@@ -253,6 +256,7 @@ function entryToRow(e) {
     e.type || 'gratitude',
     e.text || '',
     new Date().toISOString(),
+    e.category || '',
   ];
 }
 
@@ -288,6 +292,7 @@ async function pullEntriesFromSheet() {
         iso_date: row[2] || '',
         type: row[3] || 'gratitude',
         text: row[4] || '',
+        category: row[6] || '',
         synced: true,
       };
       const existing = await db.entries.where('uuid').equals(id).first();
