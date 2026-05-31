@@ -55,6 +55,10 @@
       <g id="ic-cross"><path d="M12 3v18"/><path d="M7 8.5h10"/></g>
       <g id="ic-plus"><path d="M12 5v14M5 12h14"/></g>
       <g id="ic-close"><path d="M6 6l12 12M18 6L6 18"/></g>
+      <g id="ic-camera">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </g>
     </defs>
   </svg>
 
@@ -145,8 +149,33 @@
           <a id="sync-sheet-link" class="btn btn-ghost" href="#" target="_blank" rel="noopener" hidden>Open sheet</a>
         </div>
         <p id="sync-status" class="sync-status" aria-live="polite"></p>
-        <p class="settings-version">Gratitude v0.3.6 &middot; offline-ready</p>
+        <p class="settings-version">Gratitude v0.4.0 &middot; offline-ready</p>
       </div>
+    </div>
+  </div>
+
+  <!-- Hidden file input for photo capture/pick (body-level; triggered by camera buttons on entries) -->
+  <input id="photo-input" type="file" accept="image/*" multiple hidden>
+
+  <!-- Fullscreen photo viewer overlay -->
+  <div id="photo-viewer" class="photo-viewer-overlay" hidden>
+    <!-- Nav zones occupy left/right sides; hidden when at first/last photo -->
+    <button id="viewer-prev" class="viewer-nav viewer-prev" type="button" aria-label="Previous photo" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button id="viewer-next" class="viewer-nav viewer-next" type="button" aria-label="Next photo" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+    <!-- Full-bleed image (letterboxed by object-fit: contain) -->
+    <img id="viewer-img" class="viewer-img" src="" alt="">
+    <!-- Close button — top-right -->
+    <button id="viewer-close" class="viewer-close-btn" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-close"/></svg>
+    </button>
+    <!-- Bottom bar: photo counter + delete -->
+    <div class="viewer-bottom">
+      <span id="viewer-counter" class="viewer-counter"></span>
+      <button id="viewer-delete" class="viewer-delete-btn" type="button">Delete photo</button>
     </div>
   </div>
 

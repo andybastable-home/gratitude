@@ -25,6 +25,10 @@ db.version(1).stores({
   // `synced` is intentionally NOT indexed — IndexedDB can't index booleans; we filter instead.
   entries: '++id, &uuid, iso_date, timestamp',
 });
+db.version(2).stores({
+  entries: '++id, &uuid, iso_date, timestamp',  // unchanged
+  photos:  '++id, &uuid, entry_uuid',            // new in 5a; synced/mediaItem_id not indexed
+});
 
 // ------------------------------------------------------------------
 // Date / number helpers
@@ -105,6 +109,7 @@ const CATEGORY_BY_KEY = Object.fromEntries(CATEGORIES.map((c) => [c.key, c]));
 // State + DOM refs
 // ------------------------------------------------------------------
 let currentDate = startOfDay(new Date());
+let pendingEntryUuid = null;
 
 const els = {
   date:  document.getElementById('day-date'),
@@ -126,8 +131,25 @@ const compose = {
   selected: null,
 };
 
+// Hidden file input at body level (set in index.html).
+const photoInput = document.getElementById('photo-input');
+
+// ---- Photo viewer state (populated in init once DOM refs are ready) ----
+let viewerPhotos = [];
+let viewerIndex = 0;
+let viewerDeletePending = false;
+const viewer = {
+  overlay: null,
+  img:     null,
+  counter: null,
+  prev:    null,
+  next:    null,
+  delBtn:  null,
+  close:   null,
+};
+
 // ------------------------------------------------------------------
-// Data access
+// Data access — entries
 // ------------------------------------------------------------------
 async function getEntriesForDate(d) {
   return db.entries.where('iso_date').equals(isoDate(d)).toArray();
@@ -140,7 +162,7 @@ async function getUnsyncedEntries() {
 window.getUnsyncedEntries = getUnsyncedEntries;
 
 // ------------------------------------------------------------------
-// Actions
+// Actions — entries
 // ------------------------------------------------------------------
 async function addEntry(text, category) {
   const trimmed = (text || '').trim();
@@ -188,6 +210,131 @@ function navigateDay(delta) {
   setDate(target);
 }
 
+// ---- Photos ----
+
+// Object-URL pools — revoke before re-rendering to avoid leaks.
+// _thumbUrls: thumbnail object URLs from renderDay; revoked at the top of each renderDay call.
+// _viewerUrls: full-image URL for the current viewer photo; revoked on photo change or close.
+let _thumbUrls = [];
+let _viewerUrls = [];
+function revokeThumbUrls() { _thumbUrls.forEach((u) => URL.revokeObjectURL(u)); _thumbUrls = []; }
+function revokeViewerUrls() { _viewerUrls.forEach((u) => URL.revokeObjectURL(u)); _viewerUrls = []; }
+
+// Compress a File to full (≤1600px) and thumb (≤320px) JPEG blobs.
+// imageOrientation:'from-image' respects EXIF rotation so phone photos aren't sideways.
+async function processImageFile(file) {
+  if (!file.type.startsWith('image/')) return null;
+  try {
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    function makeCanvas(maxEdge) {
+      const ratio = Math.min(1, maxEdge / Math.max(bmp.width, bmp.height));
+      const w = Math.round(bmp.width * ratio);
+      const h = Math.round(bmp.height * ratio);
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(bmp, 0, 0, w, h);
+      return c;
+    }
+    const fullCanvas = makeCanvas(1600);
+    const thumbCanvas = makeCanvas(320);
+    const width = fullCanvas.width;
+    const height = fullCanvas.height;
+    const full = await new Promise((res) => fullCanvas.toBlob(res, 'image/jpeg', 0.85));
+    const thumb = await new Promise((res) => thumbCanvas.toBlob(res, 'image/jpeg', 0.7));
+    bmp.close();
+    return { full, thumb, width, height };
+  } catch (err) {
+    console.warn('processImageFile failed', err);
+    return null;
+  }
+}
+
+async function getPhotosForEntry(entryUuid) {
+  const rows = await db.photos.where('entry_uuid').equals(entryUuid).toArray();
+  return rows.sort((a, b) => a.created - b.created);
+}
+
+// Batch fetch for all entries on a day; returns Map<entry_uuid, photo[]>.
+// One photos query replaces N per-entry queries so renderDay stays fast.
+async function getPhotosForDate(d) {
+  const entries = await getEntriesForDate(d);
+  if (!entries.length) return new Map();
+  const uuids = entries.map((e) => e.uuid);
+  const photos = await db.photos.where('entry_uuid').anyOf(uuids).toArray();
+  const map = new Map();
+  for (const p of photos) {
+    if (!map.has(p.entry_uuid)) map.set(p.entry_uuid, []);
+    map.get(p.entry_uuid).push(p);
+  }
+  for (const arr of map.values()) arr.sort((a, b) => a.created - b.created);
+  return map;
+}
+
+// Sequential processing keeps peak memory manageable on mid-tier phones.
+async function addPhotosToEntry(entryUuid, fileList) {
+  for (const file of Array.from(fileList)) {
+    const result = await processImageFile(file);
+    if (!result) continue;
+    await db.photos.add({
+      uuid: uuid(),
+      entry_uuid: entryUuid,
+      mime: 'image/jpeg',
+      width: result.width,
+      height: result.height,
+      created: Date.now(),
+      full: result.full,
+      thumb: result.thumb,
+      mediaItem_id: null,  // 5b populates (Google Photos media item id)
+      synced: false,       // 5b uses
+    });
+  }
+  await renderDay();
+}
+
+async function deletePhoto(photoId) {
+  await db.photos.delete(photoId);
+}
+
+function openCameraFor(entryUuid) {
+  pendingEntryUuid = entryUuid;
+  if (photoInput) photoInput.click();
+}
+
+// ---- Photo viewer ----
+
+function openViewer(photos, index) {
+  viewerPhotos = photos;
+  viewerDeletePending = false;
+  if (viewer.delBtn) { viewer.delBtn.textContent = 'Delete photo'; viewer.delBtn.classList.remove('is-confirm'); }
+  if (viewer.overlay) viewer.overlay.hidden = false;
+  showViewerPhoto(index);
+}
+
+function closeViewer() {
+  if (viewer.overlay) viewer.overlay.hidden = true;
+  revokeViewerUrls();
+  viewerPhotos = [];
+  viewerDeletePending = false;
+  if (viewer.delBtn) { viewer.delBtn.textContent = 'Delete photo'; viewer.delBtn.classList.remove('is-confirm'); }
+}
+
+function showViewerPhoto(idx) {
+  revokeViewerUrls();
+  viewerIndex = idx;
+  viewerDeletePending = false;
+  if (viewer.delBtn) { viewer.delBtn.textContent = 'Delete photo'; viewer.delBtn.classList.remove('is-confirm'); }
+  const photo = viewerPhotos[idx];
+  if (!photo || !viewer.img) return;
+  const url = URL.createObjectURL(photo.full);
+  _viewerUrls.push(url);
+  viewer.img.src = url;
+  if (viewer.counter) {
+    viewer.counter.textContent = viewerPhotos.length > 1 ? `${idx + 1} / ${viewerPhotos.length}` : '';
+  }
+  if (viewer.prev) viewer.prev.hidden = idx === 0;
+  if (viewer.next) viewer.next.hidden = idx >= viewerPhotos.length - 1;
+}
+
 // ------------------------------------------------------------------
 // Rendering
 // ------------------------------------------------------------------
@@ -198,7 +345,7 @@ function closeAllEntries() {
   els.list.querySelectorAll('.entry.is-open').forEach((c) => c.classList.remove('is-open'));
 }
 
-function entryCard(e) {
+function entryCard(e, photos) {
   const card = document.createElement('article');
   card.className = `entry s${(sketchCursor++ % 3) + 1}`;
 
@@ -210,17 +357,45 @@ function entryCard(e) {
   time.className = 'entry-time';
   time.textContent = formatTime(e.timestamp);
 
-  // Tapping the card reveals a confirm-by-tap action row (room for Edit later).
+  card.append(p, time);
+
+  // Thumbnail strip — always visible (not gated behind tap-open).
+  if (photos && photos.length) {
+    const strip = document.createElement('div');
+    strip.className = 'entry-photos';
+    photos.forEach((ph, i) => {
+      const img = document.createElement('img');
+      img.className = 'entry-photo-thumb';
+      const url = URL.createObjectURL(ph.thumb);
+      _thumbUrls.push(url);
+      img.src = url;
+      img.alt = '';
+      img.addEventListener('click', (ev) => { ev.stopPropagation(); openViewer(photos, i); });
+      strip.appendChild(img);
+    });
+    card.appendChild(strip);
+  }
+
+  // Tapping the card reveals a confirm-by-tap action row: camera + delete.
   const actions = document.createElement('div');
   actions.className = 'entry-actions';
+
+  const cam = document.createElement('button');
+  cam.type = 'button';
+  cam.className = 'entry-camera';
+  cam.setAttribute('aria-label', 'Add photo');
+  cam.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-camera"/></svg>';
+  cam.addEventListener('click', (ev) => { ev.stopPropagation(); openCameraFor(e.uuid); });
+
   const del = document.createElement('button');
   del.type = 'button';
   del.className = 'entry-delete';
   del.textContent = 'Delete';
   del.addEventListener('click', (ev) => { ev.stopPropagation(); deleteEntry(e.id); });
-  actions.appendChild(del);
 
-  card.append(p, time, actions);
+  actions.append(cam, del);
+  card.appendChild(actions);
+
   card.addEventListener('click', (ev) => {
     ev.stopPropagation();
     const open = card.classList.contains('is-open');
@@ -230,7 +405,7 @@ function entryCard(e) {
   return card;
 }
 
-function catGroup(entries, cat) {
+function catGroup(entries, cat, photoMap) {
   const section = document.createElement('section');
   section.className = cat ? `cat-group is-${cat.key}` : 'cat-group';
   if (cat) {
@@ -243,12 +418,14 @@ function catGroup(entries, cat) {
   }
   const list = document.createElement('div');
   list.className = 'entry-list';
-  entries.forEach((e) => list.appendChild(entryCard(e)));
+  entries.forEach((e) => list.appendChild(entryCard(e, photoMap ? (photoMap.get(e.uuid) || []) : [])));
   section.appendChild(list);
   return section;
 }
 
 async function renderDay() {
+  // Revoke previous thumbnail object URLs before creating new ones (prevent leaks).
+  revokeThumbUrls();
   applySeason(currentDate);
   const heading = formatHeading(currentDate);
   if (els.date) els.date.textContent = heading;
@@ -260,6 +437,8 @@ async function renderDay() {
       ? `<strong>${entries.length}</strong> ${entries.length === 1 ? 'thing' : 'things'} this day`
       : '';
   }
+
+  const photoMap = await getPhotosForDate(currentDate);
 
   els.list.innerHTML = '';
   sketchCursor = 0;
@@ -275,10 +454,10 @@ async function renderDay() {
   // headingless neutral group rendered last.
   for (const cat of CATEGORIES) {
     const group = entries.filter((e) => e.category === cat.key);
-    if (group.length) els.list.appendChild(catGroup(group, cat));
+    if (group.length) els.list.appendChild(catGroup(group, cat, photoMap));
   }
   const leftover = entries.filter((e) => !CATEGORY_BY_KEY[e.category]);
-  if (leftover.length) els.list.appendChild(catGroup(leftover, null));
+  if (leftover.length) els.list.appendChild(catGroup(leftover, null, photoMap));
 }
 window.renderDay = renderDay;
 
@@ -372,6 +551,7 @@ function bindDayNav() {
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
     if (compose.overlay && !compose.overlay.hidden) return;
+    if (viewer.overlay && !viewer.overlay.hidden) return;  // viewer handles its own arrows
     const settings = document.getElementById('settings-overlay');
     if (settings && !settings.hidden) return;
     const tag = document.activeElement?.tagName;
@@ -384,6 +564,15 @@ function bindDayNav() {
 // Init
 // ------------------------------------------------------------------
 function init() {
+  // Populate viewer refs (elements live in index.html).
+  viewer.overlay = document.getElementById('photo-viewer');
+  viewer.img     = document.getElementById('viewer-img');
+  viewer.counter = document.getElementById('viewer-counter');
+  viewer.prev    = document.getElementById('viewer-prev');
+  viewer.next    = document.getElementById('viewer-next');
+  viewer.delBtn  = document.getElementById('viewer-delete');
+  viewer.close   = document.getElementById('viewer-close');
+
   bindDayNav();
   // A tap anywhere outside an open entry collapses its action row.
   document.addEventListener('click', closeAllEntries);
@@ -393,8 +582,62 @@ function init() {
   compose.close && compose.close.addEventListener('click', closeCompose);
   compose.field && compose.field.addEventListener('input', updateAddState);
   compose.add && compose.add.addEventListener('click', submitCompose);
+
+  // Hidden photo file input — change fires after user picks a file/photo.
+  if (photoInput) {
+    photoInput.addEventListener('change', async (ev) => {
+      const entryUuid = pendingEntryUuid;
+      pendingEntryUuid = null;
+      if (!entryUuid || !ev.target.files || !ev.target.files.length) return;
+      await addPhotosToEntry(entryUuid, ev.target.files);
+      ev.target.value = '';  // reset so re-picking the same file refires change
+    });
+  }
+
+  // Photo viewer button wiring.
+  if (viewer.close) viewer.close.addEventListener('click', closeViewer);
+  if (viewer.prev)  viewer.prev.addEventListener('click', () => { if (viewerIndex > 0) showViewerPhoto(viewerIndex - 1); });
+  if (viewer.next)  viewer.next.addEventListener('click', () => { if (viewerIndex < viewerPhotos.length - 1) showViewerPhoto(viewerIndex + 1); });
+
+  // Clicking the dark backdrop (not the image or controls) closes the viewer.
+  if (viewer.overlay) {
+    viewer.overlay.addEventListener('click', (ev) => {
+      if (ev.target === viewer.overlay) closeViewer();
+    });
+  }
+
+  // Viewer delete — confirm-by-tap: first tap shows confirm label, second tap deletes.
+  if (viewer.delBtn) {
+    viewer.delBtn.addEventListener('click', async () => {
+      if (!viewerDeletePending) {
+        viewerDeletePending = true;
+        viewer.delBtn.textContent = 'Confirm delete';
+        viewer.delBtn.classList.add('is-confirm');
+      } else {
+        const photo = viewerPhotos[viewerIndex];
+        if (!photo) return;
+        await deletePhoto(photo.id);
+        viewerPhotos = viewerPhotos.filter((_, i) => i !== viewerIndex);
+        if (!viewerPhotos.length) {
+          closeViewer();
+        } else {
+          showViewerPhoto(Math.min(viewerIndex, viewerPhotos.length - 1));
+        }
+        await renderDay();
+      }
+    });
+  }
+
+  // Keyboard: Escape closes overlays (viewer first, then compose); viewer arrows cycle photos.
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && compose.overlay && !compose.overlay.hidden) closeCompose();
+    if (e.key === 'Escape') {
+      if (viewer.overlay && !viewer.overlay.hidden) { closeViewer(); return; }
+      if (compose.overlay && !compose.overlay.hidden) { closeCompose(); return; }
+    }
+    if (viewer.overlay && !viewer.overlay.hidden) {
+      if (e.key === 'ArrowLeft' && viewerIndex > 0) showViewerPhoto(viewerIndex - 1);
+      if (e.key === 'ArrowRight' && viewerIndex < viewerPhotos.length - 1) showViewerPhoto(viewerIndex + 1);
+    }
   });
 
   const settingsBtn = document.getElementById('settings-btn');

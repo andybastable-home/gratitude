@@ -89,6 +89,10 @@ future sessions can grep banners instead of reading whole files. The sister proj
 - **IndexedDB** `Gratitude` / store `entries`, keyed `++id` with unique `uuid`.
   Entry shape (v1, minimal — Phase 4 extends): `{ uuid, type:'gratitude', timestamp,
   iso_date, text, synced }`. `synced` is a local-only bool (false = needs pushing).
+- **IndexedDB** store `photos` (Dexie v2, added Phase 5a — local-only):
+  `{ uuid, entry_uuid, mime:'image/jpeg', width, height, created, full:Blob, thumb:Blob,
+  mediaItem_id:null, synced:false }`. `mediaItem_id` and `synced` are 5b fields, not yet used.
+  `Photos` sheet tab and Google Photos upload land in **5b**.
 - **Google Sheet** — title "Gratitude log", two tabs:
   - `Entries` (cols A–F), header v1: `['uuid','epoch','iso_date','type','text','synced_at']`.
   - `Metadata` — `A1/B1` = schema version; `A2/B2` = convention note.
